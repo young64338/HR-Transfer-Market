@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Transfer Market</title>
+    <!-- Google Fonts: Inter & Outfit for premium look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="privacy-active">
+    <div class="app-container">
+        <!-- 사이드바 -->
+        <aside class="sidebar glass-panel">
+            <div class="logo">
+                <span class="logo-icon"><i class="fa-solid fa-futbol"></i></span>
+                <h1>HR Market</h1>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active"><i class="fa-solid fa-chart-line"></i> <span>대시보드</span></a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-users"></i> <span>스카우팅 보드</span></a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-star"></i> <span>TOTW (이주의 팀)</span></a>
+                <a href="#" class="nav-item" id="nav-training"><i class="fa-solid fa-graduation-cap"></i> <span>트레이닝 존</span></a>
+            </nav>
+
+            <div class="user-profile">
+                <div class="avatar">KIM</div>
+                <div class="user-info">
+                    <span class="user-name">김팀장</span>
+                    <span class="user-role">Team Lead</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 메인 콘텐츠 -->
+        <main class="main-content">
+            <!-- 상단 헤더 (GNB 10 버튼) -->
+            <header class="top-header glass-panel" style="justify-content: space-between; padding: 0 24px;">
+                <!-- Mode Switcher (1~4) -->
+                <div class="mode-selector">
+                    <button class="mode-btn" data-mode="admin" style="border: 1px solid var(--danger);"><i class="fa-solid fa-crown"></i> 관리자 모드</button>
+                    <button class="mode-btn" data-mode="hr"><i class="fa-solid fa-user-tie"></i> HR 모드</button>
+                    <button class="mode-btn active" data-mode="team"><i class="fa-solid fa-people-group"></i> 팀장 모드</button>
+                    <button class="mode-btn" data-mode="personal"><i class="fa-solid fa-user"></i> 개인 모드</button>
+                </div>
+
+                <!-- Quick Actions (5~10) -->
+                <div class="header-actions" style="gap: 12px;">
+                    <button class="btn-icon-text" id="gnb-talent-map" title="전사 인재맵"><i class="fa-solid fa-map"></i> <span>인재맵</span></button>
+                    <button class="btn-icon-text" id="gnb-training" title="교육훈련 관리"><i class="fa-solid fa-graduation-cap"></i> <span>훈련</span></button>
+                    <button class="btn-icon-text" id="gnb-reward" title="보상 관리"><i class="fa-solid fa-gift"></i> <span>보상</span></button>
+                    <button class="btn-icon-text" id="gnb-notify" title="알림 센터" style="position: relative;">
+                        <i class="fa-solid fa-bell"></i> <span>알림</span>
+                        <span id="notify-badge" class="pulse-anim" style="position: absolute; top: 5px; right: 10px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%;"></span>
+                    </button>
+                    <div id="gnb-privacy-toggle" class="privacy-toggle" style="padding: 6px 12px; font-size: 11px; border-radius: 6px; cursor: pointer; border: 1px solid var(--success); color: var(--success); display: flex; align-items: center; gap: 6px; transition: all 0.3s ease; background: rgba(0, 255, 153, 0.1);">
+                        <i class="fa-solid fa-shield-halved"></i> <span id="privacy-status-text">보호 ON</span>
+                    </div>
+                    <button id="btn-create-project" class="btn-primary" style="padding: 6px 16px; font-size: 13px;"><i class="fa-solid fa-plus"></i> 팀/프로젝트 생성</button>
+                </div>
+            </header>
+
+            <!-- Admin Mode Dashboard (C-Level Executive View) -->
+            <section id="admin-dashboard-section" class="dashboard-section" style="display: none;">
+                <div class="admin-welcome-msg glass-panel">
+                    <h3><i class="fa-solid fa-chart-pie" style="color: var(--primary-neon);"></i> [전사 조직 현황 요약]</h3>
+                    <p id="admin-summary-text">AI 분석 중...</p>
+                </div>
+
+                <div class="admin-grid">
+                    <!-- Widget 1: 전사 조직 성과 요약 -->
+                    <div class="admin-widget glass-panel">
+                        <h4><i class="fa-solid fa-chart-line"></i> 조직 성과 요약</h4>
+                        <div class="aw-content">
+                            <div class="big-stat">평균 Match Rating <span class="stat-up">8.2 <i class="fa-solid fa-caret-up"></i></span></div>
+                            <div class="sub-stat">목표 달성률: 88%</div>
+                        </div>
+                    </div>
+                    <!-- Widget 2: 부서별 업무량 -->
+                    <div class="admin-widget glass-panel">
+                        <h4><i class="fa-solid fa-weight-hanging"></i> 부서별 업무량</h4>
+                        <div class="aw-content">
+                            <div class="bar-chart-row"><span>영업지원</span><div class="bar-bg"><div class="bar-fill danger" style="width: 120%;">120%</div></div></div>
+                            <div class="bar-chart-row"><span>마케팅</span><div class="bar-bg"><div class="bar-fill warning" style="width: 95%;">95%</div></div></div>
+                            <div class="bar-chart-row"><span>AI기획</span><div class="bar-bg"><div class="bar-fill safe" style="width: 70%;">70%</div></div></div>
+                        </div>
+                    </div>
+                    <!-- Widget 3: 부서별 인력 상태 -->
+                    <div class="admin-widget glass-panel">
+                        <h4><i class="fa-solid fa-users-gear"></i> 인력 상태 (수급)</h4>
+                        <div class="aw-content tag-list">
+                            <span class="status-tag danger">영업관리 (부족)</span>
+                            <span class="status-tag warning">마케팅 (보완)</span>
+                            <span class="status-tag safe">AI기획 (적정)</span>
+                        </div>
+                    </div>
+                    <!-- Widget 4: 주요 프로젝트 현황 -->
+                    <div class="admin-widget glass-panel">
+                        <h4><i class="fa-solid fa-rocket"></i> 핵심 프로젝트</h4>
+                        <div class="aw-content list-view">
+                            <div class="list-item"><span>글로벌 런칭 TF</span> <span class="badge safe">순항 (80%)</span></div>
+                            <div class="list-item"><span>사내망 개편</span> <span class="badge warning">지연 (45%)</span></div>
+                        </div>
+                    </div>
+                    <!-- Widget 5: 조직 리스크 알림 -->
+                    <div class="admin-widget glass-panel">
+                        <h4><i class="fa-solid fa-triangle-exclamation"></i> 주요 리스크</h4>
+                        <div class="aw-content list-view">
+                            <div class="list-item text-danger"><i class="fa-solid fa-fire"></i> 영업부 번아웃 조짐 (3명)</div>
+                            <div class="list-item text-warning"><i class="fa-solid fa-scale-unbalanced"></i> 마케팅부 공정성 불만</div>
+                        </div>
+                    </div>
+                    <!-- Widget 6: 핵심 인재 현황 -->
+                    <div class="admin-widget glass-panel">
+                        <h4><i class="fa-solid fa-gem"></i> 핵심 인재 (TOTW)</h4>
+                        <div class="aw-content">
+                            <div class="profile-row">
+                                <img src="https://i.pravatar.cc/150?img=47" class="mini-avatar">
+                                <div><strong>김영은</strong> (AI기획) <br><small>OVR 92</small></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Widget 7: 이탈 위험 인재 -->
+                    <div class="admin-widget glass-panel">
+                        <h4><i class="fa-solid fa-person-walking-arrow-right"></i> 이탈 위험 인재</h4>
+                        <div class="aw-content">
+                            <div class="list-item text-danger">고성과자 1명 이탈 시그널 감지 (Growth 정체)</div>
+                        </div>
+                    </div>
+                    <!-- Widget 8: 교육훈련 필요 -->
+                    <div class="admin-widget glass-panel">
+                        <h4><i class="fa-solid fa-book-open-reader"></i> 훈련 필요 영역</h4>
+                        <div class="aw-content tag-list">
+                            <span class="status-tag info">IT 자동화 역량</span>
+                            <span class="status-tag info">데이터 의사결정</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- 2. HR Dashboard Section (HR 담당자 모드) -->
+            <!-- ========================================== -->
+            <section id="hr-dashboard-section" class="dashboard-section" style="display: none;">
+                <div class="admin-welcome-msg glass-panel" style="border-left-color: var(--gold-main);">
+                    <h3><i class="fa-solid fa-briefcase" style="color: var(--gold-main);"></i> [HR 담당자 대시보드]</h3>
+                    <p>전사 직원의 역량, 교육, 성과, 보상 데이터를 기반으로 인사 업무를 지원합니다.</p>
+                </div>
+                <div class="dashboard-grid">
+                    <!-- Widget 1: 전사 직원 검색 -->
+                    <div class="db-widget glass-panel"><h4><i class="fa-solid fa-magnifying-glass"></i> 직원 검색</h4><p>이름, 부서, 스탯으로 검색 (Mock)</p></div>
+                    <!-- Widget 2: Company-wide Talent Map (기존 재활용) -->
+                    <div class="db-widget glass-panel hr-talent-map-container" style="grid-column: span 2;">
+                        <h4><i class="fa-solid fa-map-location-dot"></i> 부서별 역량 분석 (Talent Map)</h4>
+                        <table class="talent-table" style="font-size: 11px;">
+                            <thead><tr><th>Department</th><th>Core Strengths</th><th>Status</th></tr></thead>
+                            <tbody>
+                                <tr><td>AI 융합기획팀</td><td>데이터 분석, 문제해결력</td><td><span class="status-badge optimal">적정</span></td></tr>
+                                <tr><td>재무결제팀</td><td>결제 프로세스, 경제 이해도</td><td><span class="status-badge needs-update">보완</span></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Widget 3: 성과 포인트 관리 -->
+                    <div class="db-widget glass-panel"><h4><i class="fa-solid fa-coins"></i> 성과 포인트 관리</h4><p>이번 주 발행 포인트: 12,000 P</p></div>
+                    <!-- Widget 4: 보상 지급 현황 -->
+                    <div class="db-widget glass-panel"><h4><i class="fa-solid fa-gift"></i> 보상 지급 현황</h4><p>리프레시 휴가: 3건 대기</p></div>
+                    <!-- Widget 5: 핵심 인재 후보군 -->
+                    <div class="db-widget glass-panel"><h4><i class="fa-solid fa-star"></i> 핵심 인재 Pool</h4><p>승진 대상자 5명 추출 완료</p></div>
+                    <!-- Widget 6: 이직 위험 알림 (기존 Risk Radar 재활용) -->
+                    <div class="db-widget glass-panel hr-risk-radar-container" style="grid-column: span 2;">
+                        <h4><i class="fa-solid fa-person-running text-danger"></i> 이직/번아웃 위험 알림</h4>
+                        <div class="list-view">
+                            <div class="list-item text-danger"><i class="fa-solid fa-fire"></i> 글로벌사업지원 [EMP04] 김건우 번아웃 조짐</div>
+                            <div class="list-item text-warning"><i class="fa-solid fa-person-running"></i> AI기획 [EMP01] 김영은 이탈 위험</div>
+                        </div>
+                    </div>
+                    <!-- Widget 7: 교육훈련 계획 생성 -->
+                    <div class="db-widget glass-panel"><h4><i class="fa-solid fa-chalkboard-user"></i> 교육 계획 생성</h4><button class="btn-primary" style="width:100%; font-size:11px;">새로운 교육 매칭</button></div>
+                </div>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- 3. Team Leader Dashboard Section (팀장 모드) -->
+            <!-- ========================================== -->
+            <section id="team-dashboard-section" class="dashboard-section" style="display: block;">
+                <div class="admin-welcome-msg glass-panel" style="border-left-color: var(--success);">
+                    <h3><i class="fa-solid fa-people-group" style="color: var(--success);"></i> [팀장 대시보드]</h3>
+                    <p>팀원의 업무 흐름, 부담도, 프로젝트 적합도를 확인하고 균형 있는 팀 구성을 지원합니다.</p>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <!-- Widget 1: 업무 배분 공정성 체크 -->
+                    <div class="db-widget glass-panel"><h4><i class="fa-solid fa-scale-balanced"></i> 배분 공정성</h4><div class="bar-chart-row"><span>불만도</span><div class="bar-bg"><div class="bar-fill warning" style="width:40%;">주의</div></div></div></div>
+                    <!-- Widget 2: 이번 주 핵심 업무 -->
+                    <div class="db-widget glass-panel"><h4><i class="fa-solid fa-list-check"></i> 주간 핵심 업무</h4><ul style="font-size:12px; padding-left:15px; margin:0;"><li class="text-main">A프로젝트 런칭</li><li class="text-main">주간 리포트 마감</li></ul></div>
+                    <!-- Widget 3: 주간 피드백 및 AI 리포트 -->
+                    <div class="db-widget glass-panel" style="grid-column: span 2;">
+                        <h4 style="color: var(--gold-main);"><i class="fa-solid fa-robot"></i> AI 리더십 리포트 (Manager's Mirror)</h4>
+                        <p style="font-size: 13px;">"이번 주 전술 수행으로 절감된 낭비 시간: <span class="highlight-text">6시간</span>"<br>Risk Alert: 특정 팀원의 수비 과부하 감지. 리워드 배분 권장.</p>
+                    </div>
+                </div>
+
+                <div class="section-header" style="margin-top: 30px;">
+                    <h2><i class="fa-solid fa-id-card"></i> 우리 팀원 목록 (Player Cards)</h2>
+                    <p>현재 부서의 구성원 역량 카드입니다.</p>
+                </div>
+                <!-- 기존 선수 카드 리스트 재활용 -->
+                <div id="player-cards-container" class="cards-grid"></div>
+                
+                <!-- 기존 PIP 집중 관리 리스트 -->
+                <div id="transfer-list-section" style="margin-top: 30px; border-top: 1px dashed rgba(255, 51, 102, 0.3); padding-top: 20px;">
+                    <h3 style="color: var(--danger); font-size:16px; margin-bottom: 15px;"><i class="fa-solid fa-triangle-exclamation"></i> 집중 관리 대상 (Transfer List)</h3>
+                    <div id="pip-cards-container" class="cards-grid"></div>
+                </div>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- 4. Personal Dashboard Section (개인 모드) -->
+            <!-- ========================================== -->
+            <section id="personal-dashboard-section" class="dashboard-section" style="display: none;">
+                <div class="admin-welcome-msg glass-panel" style="border-left-color: var(--primary-neon);">
+                    <h3><i class="fa-solid fa-seedling" style="color: var(--primary-neon);"></i> [나의 성장 대시보드]</h3>
+                    <p>나의 역량, 업무, 교육, 컨디션을 확인하고 성장 방향을 스스로 관리합니다.</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Widget 1: 나의 능력치 변화 -->
+                    <div class="db-widget glass-panel"><h4><i class="fa-solid fa-arrow-trend-up"></i> 능력치 변화 (Trend)</h4><p style="font-size:12px;">최근 3주간 GRW 스탯이 상승 곡선입니다.</p></div>
+                    <!-- Widget 2: 심리/컨디션 상태 -->
+                    <div class="db-widget glass-panel"><h4><i class="fa-solid fa-heart-pulse"></i> 컨디션 펄스</h4><p style="font-size:12px;">현재 사기(Morale): <strong class="text-main">양호</strong></p></div>
+                    <!-- Widget 3: 이번주 목표 (Priority Sync) -->
+                    <div class="db-widget glass-panel" style="grid-column: span 2;">
+                        <h4><i class="fa-solid fa-bullseye"></i> 주간 Priority Sync</h4>
+                        <div class="progress-bar-bg" style="margin:0;"><div class="progress-bar-fill safe" style="width: 92%;">일치도 92%</div></div>
+                        <p style="font-size:11px; margin-top:8px;">팀 목표와 매우 잘 맞습니다. 보너스 획득 예정.</p>
+                    </div>
+                    <!-- Widget 4: 나의 성과 포인트 -->
+                    <div class="db-widget glass-panel"><h4><i class="fa-solid fa-coins" style="color:gold;"></i> 내 포인트</h4><div class="big-stat" style="color:gold;">3,450 P</div></div>
+                    <!-- Widget 5: 추천 교육 -->
+                    <div class="db-widget glass-panel"><h4><i class="fa-solid fa-lightbulb"></i> AI 추천 교육</h4><div class="badge safe">데이터 리터러시</div> <div class="badge info">고급 파이썬</div></div>
+                </div>
+
+                <!-- 개인 카드 단일 표시용 (선택사항) -->
+                <div class="section-header" style="margin-top: 30px;">
+                    <h2><i class="fa-solid fa-user-astronaut"></i> 나의 인재 카드</h2>
+                </div>
+                <div id="personal-card-container" class="cards-grid" style="justify-content: flex-start;">
+                    <!-- 개인 카드는 app.js에서 본인 데이터(예: EMP01)만 렌더링되도록 수정 예정 -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Training Center Modal -->
+    <div id="training-modal" class="modal-overlay">
+        <div class="modal-content glass-panel">
+            <button class="close-modal" id="close-training"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-graduation-cap"></i> 트레이닝 존 (Stat Upgrade)</h2>
+                <p>사내 교육 수료 및 외부 자격증 갱신을 통해 영구적으로 스탯을 상승시킵니다.</p>
+            </div>
+            
+            <div class="training-body">
+                <div class="training-form">
+                    <label>자격증 / 훈련 카테고리</label>
+                    <select id="training-category" class="styled-select">
+                        <option value="data">데이터 분석 과정 (사내 이수)</option>
+                        <option value="lang">OPIc / TOEIC / G-TELP 갱신</option>
+                        <option value="lead">리더십 워크숍 수료</option>
+                    </select>
+                    
+                    <button id="btn-submit-training" class="btn-primary" style="margin-top: 16px; width: 100%; justify-content: center;">
+                        <i class="fa-solid fa-upload"></i> 증빙 제출 및 스탯 업데이트
+                    </button>
+                </div>
+                
+                <div class="training-preview">
+                    <!-- 스탯 업그레이드 전후 비교 시각화 (예: 김건우 기준) -->
+                    <div class="preview-card">
+                        <div class="pc-name">[EMP04] 김건우</div>
+                        <div class="pc-stats">
+                            <div class="pc-stat"><span>현재 GRW:</span> <strong id="current-grw">92</strong></div>
+                            <i class="fa-solid fa-arrow-right" style="color: var(--gold-main);"></i>
+                            <div class="pc-stat"><span>예상 GRW:</span> <strong id="next-grw" class="glow-text">95</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 네온 알림창 (초기 숨김) -->
+            <div id="training-success-msg" class="success-neon-msg" style="display: none;">
+                <i class="fa-solid fa-bolt"></i> 훈련 효과로 스탯이 상승했습니다! 사내 이적 시장에서 예상 몸값(연봉 인상률)이 상승했습니다.
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- Macro Talent Map Modal (전사 인재맵) -->
+    <!-- ========================================== -->
+    <div id="talent-map-modal" class="modal-overlay">
+        <div class="modal-content glass-panel" style="max-width: 1000px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-map" style="color: var(--primary-neon);"></i> 전사 인재맵 (Macro Talent Distribution Dashboard)</h2>
+                <button class="btn-close" id="close-talent-map"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="admin-welcome-msg" style="margin-bottom: 20px; border-left: 3px solid var(--primary-neon); background: rgba(255,255,255,0.05); padding: 15px;">
+                <p style="margin:0; font-size:13px;">🗺️ <strong>[전사 인재맵]</strong> 회사 전체 인재의 역량과 업무 경험을 부서별로 한눈에 파악하고 전략적 배치를 계획합니다.</p>
+            </div>
+
+            <!-- 3단 그리드 (9개 위젯) -->
+            <div class="dashboard-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <!-- 1. 부서별 평균 역량 (Radar Chart Mock) -->
+                <div class="db-widget glass-panel" style="align-items: center; text-align: center;">
+                    <h4><i class="fa-solid fa-spider"></i> 평균 역량 분포</h4>
+                    <div class="radar-mock">
+                        <div class="radar-hex">
+                            <span style="position:absolute; top:-20px; font-size:10px;">PRF</span>
+                            <span style="position:absolute; bottom:-20px; font-size:10px;">COP</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. 부서별 업무량 히트맵 -->
+                <div class="db-widget glass-panel">
+                    <h4><i class="fa-solid fa-temperature-half"></i> 부서별 업무량 히트맵</h4>
+                    <div class="heatmap-row"><span>AI기획팀</span><div class="hm-bar" style="background:var(--success); width:60%;"></div></div>
+                    <div class="heatmap-row"><span>재무결제팀</span><div class="hm-bar" style="background:#ff9900; width:85%;"></div></div>
+                    <div class="heatmap-row"><span>글로벌지원</span><div class="hm-bar" style="background:var(--danger); width:95%; box-shadow:0 0 8px var(--danger);"></div></div>
+                </div>
+
+                <!-- 3. 강/약점 분석 -->
+                <div class="db-widget glass-panel">
+                    <h4><i class="fa-solid fa-magnifying-glass-chart"></i> 부서별 강점 요약</h4>
+                    <ul style="font-size:12px; padding-left:15px; margin:0; line-height:1.6;">
+                        <li><strong class="text-main">AI기획:</strong> 데이터 분석, 문제해결</li>
+                        <li><strong class="text-main">재무결제:</strong> 금융 지식, 정확성</li>
+                        <li style="color:var(--danger);">약점: IT 자동화 역량 (전사 부족)</li>
+                    </ul>
+                </div>
+
+                <!-- 4. 교육 필요 항목 -->
+                <div class="db-widget glass-panel">
+                    <h4><i class="fa-solid fa-graduation-cap"></i> 최우선 교육 필요 영역</h4>
+                    <div class="tag-selector" style="gap:5px;">
+                        <span class="status-tag needs-update">AI 리터러시</span>
+                        <span class="status-tag shortage">IT 자동화</span>
+                        <span class="status-tag info">글로벌 커뮤니케이션</span>
+                    </div>
+                </div>
+
+                <!-- 5. 가용 인재 수 (유동성) -->
+                <div class="db-widget glass-panel" style="text-align:center;">
+                    <h4><i class="fa-solid fa-people-arrows"></i> 이동 가능 가용 인재</h4>
+                    <div class="big-stat" style="color:var(--primary-neon); margin-top:10px;">12 <span style="font-size:14px;">명</span></div>
+                    <p style="font-size:11px; margin-top:5px;">현재 리딩 프로젝트 없음</p>
+                </div>
+
+                <!-- 6. 프로젝트 투입 대기 -->
+                <div class="db-widget glass-panel" style="text-align:center;">
+                    <h4><i class="fa-solid fa-person-chalkboard"></i> 신규 투입 대기</h4>
+                    <div class="big-stat" style="color:var(--success); margin-top:10px;">5 <span style="font-size:14px;">명</span></div>
+                    <p style="font-size:11px; margin-top:5px;">최근 프로젝트 종료자</p>
+                </div>
+
+                <!-- 7. 핵심 인재 분포 -->
+                <div class="db-widget glass-panel">
+                    <h4><i class="fa-solid fa-star" style="color:var(--gold-main);"></i> 핵심 인재 (TOTW) 분포</h4>
+                    <div class="bar-chart-row" style="margin-top:5px;"><span>AI기획</span><div class="bar-bg"><div class="bar-fill" style="width:40%; background:var(--gold-main);"></div></div></div>
+                    <div class="bar-chart-row"><span>리테일</span><div class="bar-bg"><div class="bar-fill" style="width:20%; background:var(--gold-main);"></div></div></div>
+                </div>
+
+                <!-- 8. 과부하 경고 (구조적 리스크) -->
+                <div class="db-widget glass-panel risk-widget" style="border: 1px solid rgba(255,51,102,0.3);">
+                    <h4><i class="fa-solid fa-triangle-exclamation text-danger"></i> 업무 과부하 경고</h4>
+                    <div style="font-size:12px; margin-top:5px;">
+                        <span class="badge warning pulse-anim">글로벌사업지원팀</span>
+                        <p style="margin-top:8px;">인력 부족 및 연장 근로 누적.<br>신규 인력 충원 시급.</p>
+                    </div>
+                </div>
+                
+                <!-- 9. 인력 구조 건전성 -->
+                <div class="db-widget glass-panel" style="text-align:center;">
+                    <h4><i class="fa-solid fa-heart-circle-check"></i> 조직 건전성 지수</h4>
+                    <div class="progress-bar-bg" style="height:15px; margin:10px 0;"><div class="progress-bar-fill safe" style="width: 78%;">78/100</div></div>
+                    <p style="font-size:11px;">안정적이나 일부 팀 불균형 존재</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- Training Center Modal (교육훈련 관리 대시보드) -->
+    <!-- ========================================== -->
+    <div id="training-center-modal" class="modal-overlay">
+        <div class="modal-content glass-panel" style="max-width: 1000px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-graduation-cap" style="color: var(--primary-neon);"></i> 교육훈련 관리 (Training & Development Center)</h2>
+                <button class="btn-close" id="close-training-center"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="admin-welcome-msg" style="margin-bottom: 20px; border-left: 3px solid var(--success); background: rgba(255,255,255,0.05); padding: 15px;">
+                <p style="margin:0; font-size:13px;">📚 <strong>[성장 지원 플랫폼]</strong> 조직원의 부족한 역량을 진단하고 맞춤형 교육으로 성장을 돕습니다. 교육 수료 후 스탯이 영구적으로 상승합니다.</p>
+            </div>
+
+            <!-- 3단 그리드 -->
+            <div class="dashboard-grid" style="grid-template-columns: repeat(3, 1fr);">
+                
+                <!-- 1. 직원별 부족 역량 -->
+                <div class="db-widget glass-panel">
+                    <h4><i class="fa-solid fa-user-xmark"></i> 직원별 부족 역량 (Skill Gaps)</h4>
+                    <ul class="simple-list">
+                        <li><span>김건우 (글로벌사업지원팀)</span> <span class="tag-btn" style="font-size:10px; padding:2px 6px;">데이터 분석</span></li>
+                        <li><span>이정무 (영업관리팀)</span> <span class="tag-btn" style="font-size:10px; padding:2px 6px;">보고서 작성</span></li>
+                    </ul>
+                </div>
+
+                <!-- 2. AI 추천 교육 목록 -->
+                <div class="db-widget glass-panel">
+                    <h4><i class="fa-solid fa-robot"></i> AI 맞춤 추천 교육</h4>
+                    <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
+                        <div class="training-course-badge">
+                            <strong>[실무 AI] ChatGPT를 활용한 업무 자동화</strong>
+                            <span>수강 대상: 15명 (필수 3명)</span>
+                        </div>
+                        <div class="training-course-badge">
+                            <strong>[스킬업] 고급 데이터 시각화 과정</strong>
+                            <span>수강 대상: 8명</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. 교육 신청/수료 현황 -->
+                <div class="db-widget glass-panel">
+                    <h4><i class="fa-solid fa-chart-line"></i> 이달의 교육 수료율</h4>
+                    <div class="big-stat" style="color:var(--primary-neon); text-align:center; margin-top:5px;">68 <span style="font-size:16px;">%</span></div>
+                    <div class="progress-bar-bg" style="height:8px; margin-top:10px;">
+                        <div class="progress-bar-fill safe" style="width: 68%;"></div>
+                    </div>
+                    <p style="text-align:center; font-size:11px; margin-top:5px;">목표(80%) 대비 다소 부진</p>
+                </div>
+
+                <!-- 4. 부서별 교육 필요도 -->
+                <div class="db-widget glass-panel">
+                    <h4><i class="fa-solid fa-building-circle-exclamation"></i> 부서별 교육 시급성</h4>
+                    <div class="heatmap-row" style="margin-top:10px;"><span>영업관리팀</span><div class="hm-bar pulse-anim" style="background:var(--danger); width:90%;"></div></div>
+                    <div class="heatmap-row"><span>글로벌지원</span><div class="hm-bar" style="background:#ff9900; width:75%;"></div></div>
+                    <div class="heatmap-row"><span>AI기획팀</span><div class="hm-bar" style="background:var(--success); width:30%;"></div></div>
+                </div>
+
+                <!-- 5. 교육 전후 능력치 변화 (Stat Up 시뮬레이터) -->
+                <div class="db-widget glass-panel" style="border: 1px solid var(--gold-main); background: rgba(212,175,55,0.05);">
+                    <h4><i class="fa-solid fa-arrow-up-right-dots" style="color:var(--gold-main);"></i> 평균 Stat Up (교육 전후)</h4>
+                    <div style="display:flex; justify-content:space-around; align-items:center; margin-top:15px;">
+                        <div style="text-align:center;">
+                            <div style="font-size:12px; color:var(--text-muted);">교육 전 GRW</div>
+                            <div style="font-size:24px; font-weight:bold;">82</div>
+                        </div>
+                        <i class="fa-solid fa-arrow-right stat-up-anim" style="color:var(--success); font-size:20px;"></i>
+                        <div style="text-align:center;">
+                            <div style="font-size:12px; color:var(--gold-main);">교육 수료 후 예상</div>
+                            <div style="font-size:24px; font-weight:bold; color:var(--success); text-shadow:0 0 10px rgba(0,255,153,0.5);">87</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. 교육 후 실무 적용률 -->
+                <div class="db-widget glass-panel" style="text-align:center;">
+                    <h4><i class="fa-solid fa-briefcase"></i> 실무 적용률 (Application Rate)</h4>
+                    <div class="gauge-chart-mock" style="margin: 15px auto;">
+                        <div class="gauge-fill" style="transform: rotate(120deg);"></div>
+                        <div class="gauge-center">72%</div>
+                    </div>
+                    <p style="font-size:11px;">수강생의 72%가 실무에 즉시 활용 중</p>
+                </div>
+
+                <!-- 7. 다음 달 교육훈련 계획 -->
+                <div class="db-widget glass-panel">
+                    <h4><i class="fa-solid fa-calendar-days"></i> 다음 달 전사 교육 일정</h4>
+                    <ul class="simple-list" style="margin-top:10px;">
+                        <li><span style="color:var(--primary-neon);">[11/05]</span> 전사 보안 윤리 교육</li>
+                        <li><span style="color:var(--gold-main);">[11/12]</span> 차세대 리더십 부트캠프</li>
+                        <li><span style="color:var(--success);">[11/20]</span> 프롬프트 엔지니어링 실습</li>
+                    </ul>
+                </div>
+
+                <!-- 8. Quick Actions (기존 폼 호출) -->
+                <div class="db-widget glass-panel" style="display:flex; flex-direction:column; justify-content:center; gap:10px;">
+                    <button class="btn-primary" style="padding:12px;"><i class="fa-solid fa-plus"></i> 새 교육과정 개설</button>
+                    <button class="btn-secondary" id="btn-open-training-upload" style="padding:12px; background:rgba(0,243,255,0.1); border:1px solid var(--primary-neon); color:var(--primary-neon);"><i class="fa-solid fa-certificate"></i> 내 자격증/수료증 인증하기</button>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- Project Registration Form Modal (프로젝트 생성) -->
+    <!-- ========================================== -->
+    <div id="project-modal" class="modal-overlay">
+        <div class="modal-content glass-panel" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-rocket" style="color: var(--primary-neon);"></i> 프로젝트 생성 및 AI 사내 스카우팅</h2>
+                <button class="btn-close" id="close-project"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="admin-welcome-msg" style="margin-bottom: 20px; border-left: 3px solid var(--gold-main); background: rgba(255,255,255,0.05); padding: 15px;">
+                <p style="margin:0; font-size:13px;">🚀 <strong>[새 프로젝트 생성]</strong> 필요 역량을 입력하면 AI가 적합한 사내 인재를 자동으로 추천합니다.</p>
+            </div>
+
+            <div class="form-grid-2col">
+                <!-- 좌측 영역 -->
+                <div class="form-column">
+                    <div class="form-group">
+                        <label>프로젝트명</label>
+                        <input type="text" class="styled-input" placeholder="예: 글로벌 시장 런칭 TF">
+                    </div>
+                    <div class="form-group">
+                        <label>프로젝트 목적</label>
+                        <input type="text" class="styled-input" placeholder="핵심 KPI 기재">
+                    </div>
+                    <div class="form-group">
+                        <label>기대 결과물</label>
+                        <textarea class="styled-textarea" rows="2" placeholder="산출물 예시"></textarea>
+                    </div>
+                    <div class="form-group" style="display: flex; gap: 10px;">
+                        <div style="flex:1;">
+                            <label>담당 부서</label>
+                            <select class="styled-select"><option>AI 융합기획팀</option><option>글로벌사업지원팀</option></select>
+                        </div>
+                        <div style="flex:1;">
+                            <label>지원 마감일</label>
+                            <input type="date" class="styled-input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>프로젝트 기간</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="date" class="styled-input"> ~ <input type="date" class="styled-input">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 우측 영역 -->
+                <div class="form-column">
+                    <div class="form-group">
+                        <label>모집 인원</label>
+                        <input type="number" class="styled-input" min="1" max="10" value="3">
+                    </div>
+                    <div class="form-group" style="display: flex; gap: 10px;">
+                        <div style="flex:1;">
+                            <label>업무 난이도</label>
+                            <select class="styled-select"><option>Low</option><option>Medium</option><option>High</option></select>
+                        </div>
+                        <div style="flex:1;">
+                            <label>예상 업무 부담도</label>
+                            <select class="styled-select"><option>보통 (야근 없음)</option><option>다소 높음 (주 5시간↑)</option></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>필요 직무 경험</label>
+                        <textarea class="styled-textarea" rows="2" placeholder="예: B2B 영업 3년 이상"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>참여 혜택 (Transfer Bonus)</label>
+                        <textarea class="styled-textarea" rows="2" placeholder="예: 성공 시 리프레시 휴가 3일, 성과급"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 하단 Full Width: 필요 역량 태그 선택기 -->
+            <div class="form-group" style="margin-top: 20px;">
+                <label><i class="fa-solid fa-tags"></i> 필요 역량 (다중 선택)</label>
+                <div class="tag-selector" id="skill-tags">
+                    <span class="tag-btn">데이터 분석</span>
+                    <span class="tag-btn">보고서 작성</span>
+                    <span class="tag-btn">문제해결력</span>
+                    <span class="tag-btn">협업력</span>
+                    <span class="tag-btn">커뮤니케이션</span>
+                    <span class="tag-btn">리더십</span>
+                    <span class="tag-btn">민원 대응 경험</span>
+                    <span class="tag-btn">기획력</span>
+                    <span class="tag-btn">AI 활용 능력</span>
+                </div>
+            </div>
+
+            <div class="modal-actions" style="margin-top: 30px;">
+                <button class="btn-primary" id="btn-submit-project" style="width: 100%; padding: 12px; font-size: 15px;">
+                    <i class="fa-solid fa-robot"></i> 프로젝트 등록 및 AI 인재 매칭 시작
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- AI Matchmaking Result Modal (매칭 결과) -->
+    <!-- ========================================== -->
+    <div id="match-result-modal" class="modal-overlay">
+        <div class="modal-content glass-panel" style="max-width: 700px; text-align: center;">
+            <button class="btn-close" id="close-match-result" style="position:absolute; top:20px; right:20px;"><i class="fa-solid fa-xmark"></i></button>
+            
+            <!-- Loading State -->
+            <div id="ai-loading-state" style="padding: 40px 0;">
+                <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 40px; color: var(--gold-main); margin-bottom: 20px;"></i>
+                <h3>AI가 사내 인재풀을 검색 중입니다...</h3>
+                <p style="color: var(--text-muted);">요청하신 '필요 역량'과 스탯(OVR)을 매칭하고 있습니다.</p>
+            </div>
+
+            <!-- Result State (Hidden by default) -->
+            <div id="ai-result-state" style="display: none; text-align: left;">
+                <h2 style="color: var(--gold-main); margin-bottom: 10px;"><i class="fa-solid fa-trophy"></i> AI 매치메이킹 결과</h2>
+                <p style="margin-bottom: 25px; font-size: 14px;">선택하신 역량(데이터 분석, AI 활용 능력 등)에 가장 적합한 사내 인재 Top 3입니다.</p>
+
+                <div class="match-cards-container" id="ai-match-cards">
+                    <!-- JS에서 동적 생성됨 -->
+                </div>
+
+                <div style="margin-top: 30px; text-align: center;">
+                    <button class="btn-primary" id="btn-finish-scout" style="padding: 10px 30px;">이 인재들에게 스카우팅 제안 보내기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- Reward & Transfer Bonus Modal (보상 관리) -->
+    <!-- ========================================== -->
+    <div id="reward-modal" class="modal-overlay">
+        <div class="modal-content glass-panel" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-gift" style="color: var(--gold-main);"></i> 보상 및 이적 보너스 관리</h2>
+                <button class="btn-close" id="close-reward"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="reward-summary-bar glass-panel" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; margin-bottom: 20px; border: 1px solid var(--gold-main); background: rgba(212,175,55,0.05);">
+                <div>
+                    <span style="font-size: 14px; color: var(--text-muted);">현재 나의 성과 포인트</span>
+                    <div style="font-size: 32px; font-weight: bold; color: var(--gold-main);">12,500 <span style="font-size: 18px;">GP</span></div>
+                </div>
+                <div style="text-align: right;">
+                    <span style="font-size: 14px; color: var(--text-muted);">이번 달 획득 포인트</span>
+                    <div style="font-size: 24px; font-weight: bold; color: var(--success);">+2,300 <span style="font-size: 14px;">GP</span></div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid" style="grid-template-columns: 2fr 1fr;">
+                <!-- Left: Reward Shop -->
+                <div class="db-widget glass-panel">
+                    <h4><i class="fa-solid fa-store"></i> 보상 상점 (Point Shop)</h4>
+                    <div class="reward-shop-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                        <div class="reward-item-card glass-panel">
+                            <div class="item-icon" style="font-size: 24px; color: var(--gold-light); margin-bottom: 10px;"><i class="fa-solid fa-umbrella-beach"></i></div>
+                            <div class="item-info">
+                                <strong style="display: block; font-size: 14px; color: var(--text-main);">특별 휴가 1일권</strong>
+                                <span style="font-size: 12px; color: var(--gold-main);">5,000 GP</span>
+                            </div>
+                            <button class="btn-buy" style="margin-top: 10px; width: 100%; padding: 6px; background: var(--gold-main); border: none; border-radius: 4px; color: #000; font-weight: bold; cursor: pointer;" onclick="alert('교환이 완료되었습니다.')">교환</button>
+                        </div>
+                        <div class="reward-item-card glass-panel">
+                            <div class="item-icon" style="font-size: 24px; color: var(--gold-light); margin-bottom: 10px;"><i class="fa-solid fa-graduation-cap"></i></div>
+                            <div class="item-info">
+                                <strong style="display: block; font-size: 14px; color: var(--text-main);">외부 교육 바우처</strong>
+                                <span style="font-size: 12px; color: var(--gold-main);">3,000 GP</span>
+                            </div>
+                            <button class="btn-buy" style="margin-top: 10px; width: 100%; padding: 6px; background: var(--gold-main); border: none; border-radius: 4px; color: #000; font-weight: bold; cursor: pointer;" onclick="alert('교환이 완료되었습니다.')">교환</button>
+                        </div>
+                        <div class="reward-item-card glass-panel">
+                            <div class="item-icon" style="font-size: 24px; color: var(--gold-light); margin-bottom: 10px;"><i class="fa-solid fa-mug-hot"></i></div>
+                            <div class="item-info">
+                                <strong style="display: block; font-size: 14px; color: var(--text-main);">사내 카페 10회권</strong>
+                                <span style="font-size: 12px; color: var(--gold-main);">1,500 GP</span>
+                            </div>
+                            <button class="btn-buy" style="margin-top: 10px; width: 100%; padding: 6px; background: var(--gold-main); border: none; border-radius: 4px; color: #000; font-weight: bold; cursor: pointer;" onclick="alert('교환이 완료되었습니다.')">교환</button>
+                        </div>
+                        <div class="reward-item-card glass-panel">
+                            <div class="item-icon" style="font-size: 24px; color: var(--gold-light); margin-bottom: 10px;"><i class="fa-solid fa-ticket"></i></div>
+                            <div class="item-info">
+                                <strong style="display: block; font-size: 14px; color: var(--text-main);">자기계발 도서 쿠폰</strong>
+                                <span style="font-size: 12px; color: var(--gold-main);">2,000 GP</span>
+                            </div>
+                            <button class="btn-buy" style="margin-top: 10px; width: 100%; padding: 6px; background: var(--gold-main); border: none; border-radius: 4px; color: #000; font-weight: bold; cursor: pointer;" onclick="alert('교환이 완료되었습니다.')">교환</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Transfer Bonus & Leaderboard -->
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div class="db-widget glass-panel">
+                        <h4><i class="fa-solid fa-money-bill-trend-up"></i> 이적 보너스 시뮬레이터</h4>
+                        <p style="font-size: 12px; margin-top: 5px;">차기 프로젝트 성공 시 예상 보너스</p>
+                        <div class="bonus-sim-box" style="margin-top: 15px; padding: 15px; background: rgba(0,255,153,0.05); border: 1px dashed var(--success); border-radius: 8px; text-align: center;">
+                            <div style="font-size: 12px; color: var(--text-muted);">예상 인상률</div>
+                            <div style="font-size: 24px; font-weight: bold; color: var(--success);">+8.5%</div>
+                            <div style="font-size: 11px; margin-top: 5px;">(OVR 92 기준)</div>
+                        </div>
+                    </div>
+
+                    <div class="db-widget glass-panel">
+                        <h4><i class="fa-solid fa-ranking-star"></i> 명예의 전당 (Top Earners)</h4>
+                        <ul class="simple-list" style="margin-top: 10px;">
+                            <li style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);"><span>1. 김영은</span> <strong style="color: var(--gold-main);">15,200 GP</strong></li>
+                            <li style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);"><span>2. 오주영</span> <strong>12,800 GP</strong></li>
+                            <li style="display: flex; justify-content: space-between; padding: 8px 0;"><span>3. 이명철</span> <strong>11,500 GP</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- Notification Center Modal (알림 센터) -->
+    <!-- ========================================== -->
+    <div id="notification-modal" class="modal-overlay">
+        <div class="modal-content glass-panel" style="max-width: 450px; max-height: 80vh; overflow-y: auto; right: 20px; top: 80px; position: absolute; margin: 0;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-bell" style="color: var(--primary-neon);"></i> 알림 센터 (Notification Hub)</h2>
+                <button class="btn-close" id="close-notification"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="notification-list" id="notification-list-container" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                <!-- 위험 알림 -->
+                <div class="notify-item glass-panel" style="border-left: 4px solid var(--danger); padding: 15px; margin-bottom: 5px;">
+                    <div style="display: flex; gap: 12px; align-items: flex-start;">
+                        <i class="fa-solid fa-triangle-exclamation" style="color: var(--danger); font-size: 18px; margin-top: 3px;"></i>
+                        <div style="flex: 1;">
+                            <strong style="display: block; font-size: 14px; margin-bottom: 4px;">[업무 과부하 경고]</strong>
+                            <p style="font-size: 12px; color: var(--text-main); margin-bottom: 8px; line-height: 1.4;">김영은 직원의 업무 부담도가 팀 평균 대비 135%입니다. 즉각적인 업무 재배분 검토가 필요합니다.</p>
+                            <button class="btn-primary" style="padding: 4px 10px; font-size: 11px;">검토하기</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 이직 위험 알림 -->
+                <div class="notify-item glass-panel" style="border-left: 4px solid var(--danger); padding: 15px; margin-bottom: 5px;">
+                    <div style="display: flex; gap: 12px; align-items: flex-start;">
+                        <i class="fa-solid fa-person-walking-arrow-right" style="color: var(--danger); font-size: 18px; margin-top: 3px;"></i>
+                        <div style="flex: 1;">
+                            <strong style="display: block; font-size: 14px; margin-bottom: 4px;">[이직 위험 신호 감지]</strong>
+                            <p style="font-size: 12px; color: var(--text-main); margin-bottom: 8px; line-height: 1.4;">핵심 인재 이명철 직원의 활동 패턴에서 이직 준비 신호가 감지되었습니다. 1:1 면담을 권장합니다.</p>
+                            <button class="btn-primary" style="padding: 4px 10px; font-size: 11px;">면담 예약</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 추천 알림 -->
+                <div class="notify-item glass-panel" style="border-left: 4px solid var(--primary-neon); padding: 15px; margin-bottom: 5px;">
+                    <div style="display: flex; gap: 12px; align-items: flex-start;">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--primary-neon); font-size: 18px; margin-top: 3px;"></i>
+                        <div style="flex: 1;">
+                            <strong style="display: block; font-size: 14px; margin-bottom: 4px;">[교육훈련 추천]</strong>
+                            <p style="font-size: 12px; color: var(--text-main); margin-bottom: 8px; line-height: 1.4;">김건우 직원의 부족 역량 보완을 위해 '데이터 분석 입문' 과정을 추천합니다.</p>
+                            <button class="btn-secondary" style="padding: 4px 10px; font-size: 11px; background: rgba(0,243,255,0.1); border-color: var(--primary-neon); color: var(--primary-neon); border-style: solid; border-width: 1px;">과정 보기</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 보상 알림 -->
+                <div class="notify-item glass-panel" style="border-left: 4px solid var(--gold-main); padding: 15px; margin-bottom: 5px;">
+                    <div style="display: flex; gap: 12px; align-items: flex-start;">
+                        <i class="fa-solid fa-coins" style="color: var(--gold-main); font-size: 18px; margin-top: 3px;"></i>
+                        <div style="flex: 1;">
+                            <strong style="display: block; font-size: 14px; margin-bottom: 4px;">[보상 포인트 지급 완료]</strong>
+                            <p style="font-size: 12px; color: var(--text-main); margin-bottom: 8px; line-height: 1.4;">'글로벌 시장 런칭' 프로젝트 성공 보너스 2,000 GP가 지급되었습니다.</p>
+                            <button class="btn-secondary" style="padding: 4px 10px; font-size: 11px; background: rgba(212,175,55,0.1); border-color: var(--gold-main); color: var(--gold-main); border-style: solid; border-width: 1px;">내역 확인</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- Player Detailed Profile Modal (인재 상세 정보) -->
+    <!-- ========================================== -->
+    <div id="player-detail-modal" class="modal-overlay">
+        <div class="modal-content glass-panel" style="max-width: 850px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-id-card" style="color: var(--gold-main);"></i> 인재 상세 프로필 (Detailed Profile)</h2>
+                <button class="btn-close" id="close-player-detail"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div id="player-detail-content">
+                <!-- JS에서 동적 렌더링 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- Project Transfer Proposal Modal (프로젝트 배치 제안) -->
+    <!-- ========================================== -->
+    <div id="transfer-proposal-modal" class="modal-overlay">
+        <div class="modal-content glass-panel" style="max-width: 600px; text-align: center;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-arrows-turn-to-dots" style="color: var(--success);"></i> 프로젝트 배치 제안 (Transfer Market)</h2>
+                <button class="btn-close" id="close-transfer-proposal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div id="transfer-proposal-content" style="margin-top: 20px;">
+                <!-- JS에서 동적 렌더링 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" style="position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 9999; pointer-events: none;"></div>
+
+    <!-- 1. 교육 추천 모달 -->
+    <div id="training-suggestion-modal" class="modal-overlay">
+        <div class="modal-content glass-panel" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-book" style="color: var(--primary-neon);"></i> AI 맞춤 교육 추천</h2>
+                <button class="btn-close" id="close-training-suggestion"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="training-suggestion-content" style="margin-top: 15px;"></div>
+        </div>
+    </div>
+
+    <!-- 2. 성장 이력 모달 -->
+    <div id="growth-history-modal" class="modal-overlay">
+        <div class="modal-content glass-panel" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-chart-line" style="color: var(--gold-main);"></i> 인재 성장 트래킹 (Growth Trace)</h2>
+                <button class="btn-close" id="close-growth-history"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="growth-history-content" style="margin-top: 15px;"></div>
+        </div>
+    </div>
+
+    <!-- 3. 업무 부담 확인 모달 -->
+    <div id="workload-check-modal" class="modal-overlay">
+        <div class="modal-content glass-panel" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-battery-half" style="color: var(--danger);"></i> 업무 부담 및 번아웃 리스크</h2>
+                <button class="btn-close" id="close-workload-check"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="workload-check-content" style="margin-top: 15px;"></div>
+        </div>
+    </div>
+
+    <!-- 4. 면담 요청 모달 -->
+    <div id="meeting-request-modal" class="modal-overlay">
+        <div class="modal-content glass-panel" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-comments" style="color: var(--primary-neon);"></i> 1:1 면담 요청 (Meeting Request)</h2>
+                <button class="btn-close" id="close-meeting-request"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="meeting-request-content" style="margin-top: 15px;">
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 13px; margin-bottom: 8px;">면담 목적 선택</label>
+                    <select id="meeting-purpose" class="form-input" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px; border-radius: 4px;">
+                        <option value="feedback">성과 피드백 면담</option>
+                        <option value="growth">교육훈련 및 성장 상담</option>
+                        <option value="transfer">직무 이동 및 스카우팅 제안</option>
+                        <option value="workload">업무 부담 조정 면담</option>
+                        <option value="compensation">보상 관련 면담</option>
+                        <option value="morale">심리적 어려움 케어</option>
+                    </select>
+                </div>
+                <button class="btn-primary" style="width: 100%; padding: 12px;" onclick="alert('면담 요청이 발송되었습니다.'); document.getElementById('meeting-request-modal').classList.remove('show');">요청 발송</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- Player Compare Modal (인재 비교 분석) -->
+    <!-- ========================================== -->
+    <div id="compare-modal" class="modal-overlay">
+        <div class="modal-content glass-panel" style="max-width: 1100px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-scales-balanced" style="color: var(--gold-main);"></i> 인재 비교 분석 (Side-by-Side Analysis)</h2>
+                <button class="btn-close" id="close-compare-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div id="compare-content" style="margin-top: 20px;">
+                <!-- JS에서 비교 테이블 동적 생성 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 하단 비교 플로팅 바 -->
+    <div id="compare-floating-bar" class="glass-panel" style="position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); width: 400px; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 9000; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid var(--gold-main); box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);">
+        <div style="font-size: 14px; font-weight: bold;">
+            <i class="fa-solid fa-users" style="color: var(--gold-main); margin-right: 8px;"></i> 
+            비교 대상: <span id="compare-count" style="color: var(--gold-main);">0</span> / 4 명
+        </div>
+        <button id="btn-execute-compare" class="btn-primary" style="padding: 8px 16px; font-size: 13px;">비교하기 실행</button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

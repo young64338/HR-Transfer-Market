@@ -262,6 +262,33 @@ body {
     box-shadow: 0 5px 15px rgba(0, 240, 255, 0.4);
 }
 
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-main);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--gold-main);
+    color: var(--gold-main);
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+    transform: translateY(-2px);
+}
+
+.btn-secondary:active {
+    transform: translateY(0);
+}
+
 /* Dashboard Section */
 .dashboard-section {
     padding: 40px;
@@ -1819,7 +1846,17 @@ body.privacy-active .admin-welcome-msg p {
     gap: 15px;
     margin-bottom: 30px;
     border-bottom: 1px solid rgba(255,255,255,0.1);
-    padding-bottom: 2px;
+    padding-bottom: 6px; /* 스크롤바와 활성 탭 언더라인이 겹치지 않게 여유를 줍니다. */
+    overflow-x: auto;
+    overflow-y: hidden;  /* 세로 방향 스크롤은 제한합니다. */
+    flex-wrap: nowrap;
+    scrollbar-width: thin; /* Firefox에서 얇은 스크롤바가 나타나게 설정합니다. */
+    cursor: grab;          /* 기본 마우스 커서를 움켜쥘 수 있는 손 모양으로 지정합니다. */
+    user-select: none;     /* 드래그 도중 텍스트 블록이 잡히지 않도록 막아줍니다. */
+}
+
+.detail-tabs.active-drag {
+    cursor: grabbing;      /* 클릭하여 스크롤 중일 때 움켜쥔 손 모양으로 변경합니다. */
 }
 
 .tab-btn {
@@ -1836,6 +1873,8 @@ body.privacy-active .admin-welcome-msg p {
     display: flex;
     align-items: center;
     gap: 8px;
+    white-space: nowrap; /* 텍스트가 강제로 줄바꿈되는 것을 방지합니다. */
+    flex-shrink: 0;      /* 가로 폭이 좁아져도 탭 버튼 크기가 축소되지 않도록 설정합니다. */
 }
 
 .tab-btn i {
@@ -2859,6 +2898,298 @@ body.privacy-active .admin-welcome-msg p {
 #btn-logout:hover {
     color: var(--danger) !important;
     transform: scale(1.15);
+}
+
+/* ========================================== */
+/* --- TOTW & OTW (이주의 팀) 스타일 --- */
+/* ========================================== */
+
+.totw-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 100%;
+}
+
+/* 상단 최우수 팀 패널 */
+.totw-top-panel {
+    padding: 30px;
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(26, 21, 0, 0.85) 0%, rgba(10, 10, 12, 0.95) 100%);
+    border: 1px solid rgba(212, 175, 55, 0.3) !important;
+}
+
+/* 프리미엄 골드 광채 및 쓸기 효과 */
+.totw-premium-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        rgba(212, 175, 55, 0) 0%,
+        rgba(212, 175, 55, 0.15) 30%,
+        rgba(255, 215, 0, 0.3) 50%,
+        rgba(212, 175, 55, 0.15) 70%,
+        rgba(212, 175, 55, 0) 100%
+    );
+    transform: skewX(-25deg);
+    animation: goldSweep 6s infinite ease-in-out;
+    z-index: 1;
+    pointer-events: none;
+}
+
+@keyframes goldSweep {
+    0% {
+        left: -150%;
+    }
+    30% {
+        left: 150%;
+    }
+    100% {
+        left: 150%;
+    }
+}
+
+.totw-header {
+    margin-bottom: 25px;
+    position: relative;
+    z-index: 2;
+}
+
+.totw-badge-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.15);
+    color: var(--gold-light);
+    font-size: 20px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+.totw-header h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--text-main);
+    margin-bottom: 6px;
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+}
+
+.totw-intro {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.totw-intro strong {
+    color: var(--gold-light);
+}
+
+/* 최우수 팀 카드 그리드 */
+.totw-cards-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+}
+
+/* TOTW 카드에 대한 특별 프리미엄 이펙트 */
+.totw-cards-grid .player-card {
+    background: linear-gradient(135deg, #1f1a00 0%, #0d0d0f 100%) !important;
+    border: 2px solid transparent !important;
+    background-clip: padding-box !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.1) !important;
+}
+
+.totw-cards-grid .player-card::before {
+    background: linear-gradient(135deg, #ffd700 0%, #d4af37 50%, #997a00 100%) !important;
+}
+
+/* 반짝이는 특수 효과용 호버 애니메이션 추가 */
+.totw-cards-grid .player-card:hover {
+    transform: translateY(-12px) scale(1.03);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 35px rgba(212, 175, 55, 0.5) !important;
+}
+
+/* 하단 OTW 패널 */
+.otw-bottom-panel {
+    padding: 30px;
+    border-radius: 16px;
+    background: rgba(24, 24, 27, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.otw-badge-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(0, 230, 118, 0.1);
+    color: var(--success);
+    font-size: 20px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(0, 230, 118, 0.2);
+}
+
+.otw-header h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 6px;
+}
+
+.otw-intro {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+/* OTW 콘텐츠 레이아웃 */
+.otw-content-layout {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+    margin-top: 25px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.otw-squad-info {
+    flex: 1;
+}
+
+.otw-squad-info h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 15px;
+}
+
+.otw-ovr-display {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.otw-ovr-label {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.otw-ovr-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #00e676 0%, #00a352 100%);
+    color: #000;
+    font-weight: 900;
+    font-family: 'Outfit', sans-serif;
+    font-size: 22px;
+    padding: 6px 16px;
+    border-radius: 8px;
+    width: fit-content;
+    box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
+}
+
+.otw-ovr-badge small {
+    font-size: 11px;
+    font-weight: 700;
+    margin-left: 4px;
+}
+
+/* OTW 멤버 리스트 */
+.otw-members-list {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.otw-member-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.2s ease;
+}
+
+.otw-member-row:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(0, 230, 118, 0.3);
+    transform: translateX(5px);
+}
+
+.otw-member-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.otw-member-img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    object-fit: cover;
+}
+
+.otw-member-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.otw-member-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.otw-member-dept-role {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.otw-member-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.otw-member-ovr {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 900;
+    font-size: 16px;
+    color: var(--gold-light);
+}
+
+.otw-member-badge {
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
 }
 
 

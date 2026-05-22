@@ -59,7 +59,7 @@
             <nav class="nav-menu">
                 <a href="#" class="nav-item active"><i class="fa-solid fa-chart-line"></i> <span>대시보드</span></a>
                 <a href="#" class="nav-item" id="nav-scouting"><i class="fa-solid fa-users"></i> <span>스카우팅 보드</span></a>
-                <a href="#" class="nav-item"><i class="fa-solid fa-star"></i> <span>TOTW (이주의 팀)</span></a>
+                <a href="#" class="nav-item" id="nav-totw"><i class="fa-solid fa-star"></i> <span>TOTW (이주의 팀)</span></a>
                 <a href="#" class="nav-item" id="nav-training"><i class="fa-solid fa-graduation-cap"></i> <span>트레이닝 존</span></a>
             </nav>
 
@@ -277,6 +277,14 @@
 
                 <!-- ⭐️ [탭 1] 나의 성장 대시보드 탭 뷰 (기존 대시보드 콘텐츠를 뷰로 묶음) -->
                 <div class="personal-tab-view active" id="personal-tab-dashboard">
+                    <!-- 나의 인재 카드 (최상단으로 이동) -->
+                    <div class="section-header" style="margin-top: 10px; margin-bottom: 15px;">
+                        <h2><i class="fa-solid fa-user-astronaut"></i> 나의 인재 카드</h2>
+                    </div>
+                    <div id="personal-card-container" class="cards-grid" style="justify-content: flex-start; margin-bottom: 25px;">
+                        <!-- 개인 카드는 app.js에서 본인 데이터(예: EMP01)만 렌더링되도록 동적으로 주입됩니다 -->
+                    </div>
+
                     <div class="dashboard-grid">
                         <!-- Widget 1: 나의 능력치 변화 -->
                         <div class="db-widget glass-panel"><h4><i class="fa-solid fa-arrow-trend-up"></i> 능력치 변화 (Trend)</h4><p style="font-size:12px;">최근 3주간 GRW 스탯이 상승 곡선입니다.</p></div>
@@ -389,13 +397,7 @@
                         </ul>
                     </div>
 
-                    <!-- 나의 인재 카드 -->
-                    <div class="section-header" style="margin-top: 35px;">
-                        <h2><i class="fa-solid fa-user-astronaut"></i> 나의 인재 카드</h2>
-                    </div>
-                    <div id="personal-card-container" class="cards-grid" style="justify-content: flex-start;">
-                        <!-- 개인 카드는 app.js에서 본인 데이터(예: EMP01)만 렌더링되도록 수정 예정 -->
-                    </div>
+
                 </div>
 
                 <!-- ⭐️ [탭 2] 보상 상점 & 내역 탭 뷰 (개인 성장 대시보드 내부의 신규 보상 영역) -->
@@ -565,6 +567,48 @@
                     </div>
                 </div>
             </section>
+
+            <!-- ========================================== -->
+            <!-- 6. TOTW (이주의 팀) Section (신규 추가) -->
+            <!-- ========================================== -->
+            <section id="totw-section" class="dashboard-section" style="display: none;">
+                <div class="totw-container">
+                    <!-- 상단: 이주의 최우수 팀 (TOTW) -->
+                    <div class="totw-top-panel glass-panel totw-premium-glow">
+                        <div class="totw-header">
+                            <div class="totw-badge-icon"><i class="fa-solid fa-crown"></i></div>
+                            <h2>이주의 최우수 팀 (TOTW)</h2>
+                            <p class="totw-intro">"이번 주 최고의 조직력을 보여준 <strong>[마케팅 자동화 TF]</strong>를 소개합니다!"</p>
+                        </div>
+                        <!-- 최우수 팀원 카드 3장이 들어갈 그리드 -->
+                        <div id="totw-cards-container" class="totw-cards-grid">
+                            <!-- app.js에서 동적으로 카드가 렌더링됩니다 -->
+                        </div>
+                    </div>
+
+                    <!-- 하단: 주목할 만한 신규 스쿼드 (OTW) -->
+                    <div class="otw-bottom-panel glass-panel">
+                        <div class="otw-header">
+                            <div class="otw-badge-icon"><i class="fa-solid fa-seedling"></i></div>
+                            <h2>주목할 만한 신규 스쿼드 (OTW)</h2>
+                            <p class="otw-intro">"스카우팅 보드를 통해 이번 주 새롭게 결성된 신규 TF입니다."</p>
+                        </div>
+                        <div class="otw-content-layout">
+                            <div class="otw-squad-info">
+                                <h3>[글로벌 비즈니스 TF]</h3>
+                                <div class="otw-ovr-display">
+                                    <span class="otw-ovr-label">예상 시너지 점수</span>
+                                    <span class="otw-ovr-badge">89 <small>OVR</small></span>
+                                </div>
+                            </div>
+                            <!-- OTW 신규 스쿼드 명단 리스트 -->
+                            <div id="otw-list-container" class="otw-members-list">
+                                <!-- app.js에서 동적으로 리스트가 렌더링됩니다 -->
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </section>
         </main>
     </div>
 

@@ -108,11 +108,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const transferListSection = document.getElementById('transfer-list-section');
     const personalCardContainer = document.getElementById('personal-card-container'); // 개인 모드 카드
 
-    // 4대 핵심 모드 섹션
+    // 4대 핵심 모드 섹션 + TOTW 섹션
     const adminDashboardSection = document.getElementById('admin-dashboard-section');
     const hrDashboardSection = document.getElementById('hr-dashboard-section');
     const teamDashboardSection = document.getElementById('team-dashboard-section');
     const personalDashboardSection = document.getElementById('personal-dashboard-section');
+    const totwSection = document.getElementById('totw-section'); // [신규] TOTW (이주의 팀) 섹션 엘리먼트 정의
     
     let currentMode = 'team'; // default
     let compareList = []; // 인재 비교 리스트 (최대 4명)
@@ -939,6 +940,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
         renderTabContent('basic', player);
 
+        // [추가] 데스크톱 드래그 스크롤 (Drag-to-Scroll) 기능 부여
+        const tabsContainer = content.querySelector('.detail-tabs');
+        if (tabsContainer) {
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            tabsContainer.addEventListener('mousedown', (e) => {
+                isDown = true;
+                tabsContainer.classList.add('active-drag');
+                startX = e.pageX - tabsContainer.offsetLeft;
+                scrollLeft = tabsContainer.scrollLeft;
+            });
+            tabsContainer.addEventListener('mouseleave', () => {
+                isDown = false;
+                tabsContainer.classList.remove('active-drag');
+            });
+            tabsContainer.addEventListener('mouseup', () => {
+                isDown = false;
+                tabsContainer.classList.remove('active-drag');
+            });
+            tabsContainer.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - tabsContainer.offsetLeft;
+                const walk = (x - startX) * 1.5; // 드래그 속도 배율
+                tabsContainer.scrollLeft = scrollLeft - walk;
+            });
+        }
+
         content.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 content.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -982,9 +1013,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div style="font-size:12px; color:var(--text-muted);">누적 성과 포인트</div>
                         <div style="font-size:24px; font-weight:bold; color:var(--gold-main);">12,500 GP</div>
                     </div>
-                    <div style="margin-top:25px; display:flex; flex-direction:column; gap:8px;">
-                        <button class="btn-secondary" style="width:100%; font-size:12px;" id="btn-view-growth" data-id="${player.id}"><i class="fa-solid fa-chart-line"></i> 성장 이력 보기</button>
-                        <button class="btn-secondary" style="width:100%; font-size:12px;" id="btn-request-meeting" data-id="${player.id}"><i class="fa-solid fa-comments"></i> 1:1 면담 요청</button>
+                    <div style="margin-top:25px; display:flex; flex-direction:column; gap:10px;">
+                        <button class="btn-secondary" style="width:100%; font-size:13px; padding: 12px 16px;" id="btn-view-growth" data-id="${player.id}">
+                            <i class="fa-solid fa-chart-line" style="color: var(--gold-main);"></i> 성장 이력 보기
+                        </button>
+                        <button class="btn-secondary" style="width:100%; font-size:13px; padding: 12px 16px;" id="btn-request-meeting" data-id="${player.id}">
+                            <i class="fa-solid fa-comments" style="color: var(--primary-neon);"></i> 1:1 면담 요청
+                        </button>
                     </div>
                 </div>
                 <div>
@@ -1174,8 +1209,8 @@ document.addEventListener('DOMContentLoaded', () => {
             e.target.classList.add('active');
             currentMode = e.target.getAttribute('data-mode');
 
-            // 모든 뷰 숨김 및 투명도 0
-            const sections = [adminDashboardSection, hrDashboardSection, teamDashboardSection, personalDashboardSection];
+            // 모든 뷰 숨김 및 투명도 0 (TOTW 섹션 포함)
+            const sections = [adminDashboardSection, hrDashboardSection, teamDashboardSection, personalDashboardSection, totwSection];
             sections.forEach(sec => {
                 if(sec) {
                     sec.style.opacity = 0;
@@ -1875,6 +1910,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // [신규] 사이드바 'TOTW (이주의 팀)' 클릭 이벤트 바인딩
+    const navTotw = document.getElementById('nav-totw');
+    if (navTotw) {
+        navTotw.addEventListener('click', (e) => {
+            e.preventDefault();
+            showSection('totw-section');
+            navTotw.classList.add('active');
+            // 0.25초 페이드인 트랜지션 이후 섹션 내부 데이터 렌더링 호출
+            setTimeout(() => initTOTWSection(), 250);
+        });
+    }
+
     // 대기 명단 렌더링
     function renderApplicantList() {
         const list = document.getElementById('applicant-list');
@@ -2067,6 +2114,96 @@ document.addEventListener('DOMContentLoaded', () => {
         renderApplicantList();
         renderPitchSlots();
         updateChemistry();
+    }
+
+    /**
+     * [신규] TOTW (이주의 팀) 섹션 초기화 및 동적 렌더링 함수
+     * 사용자가 쉽게 이해할 수 있도록 한글 주석을 포함하여 복사-붙여넣기가 가능한 완전한 코드를 작성합니다.
+     */
+    function initTOTWSection() {
+        const totwCardsContainer = document.getElementById('totw-cards-container');
+        const otwListContainer = document.getElementById('otw-list-container');
+
+        if (!totwCardsContainer || !otwListContainer) return;
+
+        // 1. 상단: 이주의 최우수 팀 (TOTW) - [마케팅 자동화 TF]
+        // 구성원: 김영은(EMP01), 이명철(EMP03), 오주영(EMP02)
+        const totwMemberIds = ["EMP01", "EMP03", "EMP02"];
+        totwCardsContainer.innerHTML = '';
+
+        totwMemberIds.forEach(id => {
+            const player = players.find(p => p.id === id);
+            if (!player) return;
+
+            // 기존 카드 렌더링 로직(renderCards)과 동일한 비주얼 구조 적용
+            const cardHTML = `
+                <div class="player-card totw" data-id="${player.id}" style="padding-bottom: 70px;">
+                    <!-- 인재 비교 버튼 (저울) - 좌측 상단 -->
+                    <div class="card-compare-btn ${compareList.includes(player.id) ? 'active' : ''}" title="비교 목록에 추가" data-id="${player.id}" style="position:absolute; top:15px; left:15px; background:rgba(0,0,0,0.5); border-radius:50%; width:32px; height:32px; display:flex; justify-content:center; align-items:center; cursor:pointer; z-index:10; transition:all 0.3s; color:rgba(255,255,255,0.8); border:1px solid rgba(255,255,255,0.2);">
+                        <i class="fa-solid fa-scales-balanced"></i>
+                    </div>
+
+                    <!-- 관심 인재 등록 버튼 (하트) - 우측 상단 -->
+                    <div class="card-watchlist-btn" title="관심 인재 등록">
+                        <i class="fa-solid fa-heart"></i>
+                    </div>
+                    
+                    <div class="card-image" style="margin-top: 40px;">
+                        <img src="${player.imgUrl}" alt="${player.name}" style="width: 110px; height: 110px; object-fit: cover;">
+                        <div class="player-name" style="font-size: 20px; margin-top: 10px;">${player.name}</div>
+                        <div style="font-size: 12px; color: var(--gold-main); margin-top: 4px; font-weight: bold;">${player.dept}</div>
+                    </div>
+                    
+                    <div class="stat-highlight" style="position:relative; margin-top: 15px; padding: 10px; font-size: 12px; text-align: center; border-radius: 4px;">
+                        <i class="fa-solid fa-bolt"></i> ${player.highlight}
+                        <div style="margin-top: 8px; display:flex; justify-content:center; gap:12px;">
+                            <i class="fa-solid fa-book mini-action-icon book" title="교육 추천" data-id="${player.id}"></i>
+                            <i class="fa-solid fa-battery-half mini-action-icon battery" title="업무 부담 확인" data-id="${player.id}"></i>
+                            <span class="card-detail-link" data-id="${player.id}" style="font-size: 11px; cursor: pointer; text-decoration: underline;">[상세 정보]</span>
+                        </div>
+                    </div>
+
+                    <!-- 프로젝트 배치 버튼 -->
+                    <button class="btn-transfer" data-id="${player.id}" style="position: absolute; bottom: 12px; left: 12px; right: 12px; width: calc(100% - 24px); background: linear-gradient(135deg, #00ff99, #00cc7a); color: #000; font-weight: 800; border: none; padding: 10px; border-radius: 6px; box-shadow: 0 4px 15px rgba(0, 255, 153, 0.3); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i class="fa-solid fa-arrows-turn-to-dots"></i> 프로젝트 배치 제안
+                    </button>
+                </div>
+            `;
+            totwCardsContainer.insertAdjacentHTML('beforeend', cardHTML);
+        });
+
+        // 2. 하단: 주목할 만한 신규 스쿼드 (OTW) - [글로벌 비즈니스 TF]
+        // 구성원: 김건우(EMP04), 황한솔(EMP06), 이정무(EMP05)
+        const otwMemberIds = ["EMP04", "EMP06", "EMP05"];
+        otwListContainer.innerHTML = '';
+
+        otwMemberIds.forEach(id => {
+            const player = players.find(p => p.id === id);
+            if (!player) return;
+
+            const isPip = player.status === "Transfer List";
+            const rowHTML = `
+                <div class="otw-member-row">
+                    <div class="otw-member-left">
+                        <img class="otw-member-img" src="${player.imgUrl}" alt="${player.name}" style="${isPip ? 'filter: grayscale(50%); border-color: var(--danger);' : ''}">
+                        <div class="otw-member-details">
+                            <span class="otw-member-name">${player.name} (${player.role})</span>
+                            <span class="otw-member-dept-role">${player.dept}</span>
+                        </div>
+                    </div>
+                    <div class="otw-member-right">
+                        <span class="otw-member-ovr" style="${isPip ? 'color: var(--danger);' : ''}">${player.overall} OVR</span>
+                        <span class="otw-member-badge" style="${isPip ? 'background: rgba(255, 51, 102, 0.15); color: var(--danger);' : 'background: rgba(0, 230, 118, 0.1); color: var(--success);'}">
+                            ${isPip ? '피드백 필요' : '시너지 우수'}
+                        </span>
+                    </div>
+                </div>
+            `;
+            otwListContainer.insertAdjacentHTML('beforeend', rowHTML);
+        });
+
+        // TOTW 섹션 내 동적 카드들에 대해 클릭/호버 이벤트 바인딩 다시 실행
+        attachCardEvents();
     }
 
     // ==========================================

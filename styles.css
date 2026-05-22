@@ -1851,3 +1851,387 @@ body.privacy-active .admin-welcome-msg p {
     align-items: center;
     justify-content: center;
 }
+
+/* ============================================== */
+/* === Scouting Board (Squad Builder) Styles === */
+/* ============================================== */
+
+.scouting-board-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px 0;
+}
+
+.scouting-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-left: 4px solid var(--primary-neon);
+}
+
+.scouting-header h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.scouting-header p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.scouting-header-meta {
+    display: flex;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+.meta-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.squad-builder-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+/* ── 좌측: 대기 명단 ── */
+.applicant-pool {
+    padding: 20px;
+    position: sticky;
+    top: 80px;
+}
+
+.applicant-pool h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.pool-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 15px;
+}
+
+#applicant-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.applicant-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.applicant-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--primary-neon);
+    opacity: 0;
+    transition: opacity 0.25s;
+}
+
+.applicant-item:hover {
+    background: rgba(0, 240, 255, 0.07);
+    border-color: var(--primary-neon);
+    transform: translateX(4px);
+}
+
+.applicant-item:hover::before { opacity: 1; }
+
+.applicant-item.in-squad {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
+    border-color: rgba(255,255,255,0.04);
+}
+
+.applicant-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.15);
+    flex-shrink: 0;
+}
+
+.applicant-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.applicant-name {
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.applicant-role {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.applicant-ovr {
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--gold-main);
+    flex-shrink: 0;
+}
+
+/* ── 우측 패널 ── */
+.squad-right-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ── 피치 영역 ── */
+.squad-pitch-area {
+    position: relative;
+    min-height: 360px;
+    border-radius: 16px;
+    overflow: hidden;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(255,255,255,0.015) 0px,
+            rgba(255,255,255,0.015) 40px,
+            transparent 40px,
+            transparent 80px
+        ),
+        linear-gradient(160deg, #0a1f0a 0%, #061206 60%, #091a09 100%);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 20px;
+    box-shadow: inset 0 0 60px rgba(0,0,0,0.4);
+}
+
+.pitch-label-top {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+/* 다이아몬드 포메이션 Grid (1-2-1) */
+.pitch-slots {
+    display: grid;
+    grid-template-areas:
+        ".         top      ."
+        "mid-left   .    mid-right"
+        ".        bottom    .";
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    gap: 15px;
+    height: 290px;
+}
+
+.pitch-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.45);
+    border: 2px dashed rgba(255,255,255,0.2);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 10px 8px;
+    text-align: center;
+}
+
+.pitch-slot:hover {
+    border-color: var(--primary-neon);
+    background: rgba(0,240,255,0.05);
+    box-shadow: 0 0 15px rgba(0,240,255,0.15);
+}
+
+.pitch-slot.filled {
+    border-style: solid;
+    border-color: var(--gold-main);
+    background: rgba(212,175,55,0.08);
+    cursor: default;
+}
+
+.pitch-slot.filled:hover {
+    border-color: var(--danger);
+    background: rgba(255,51,102,0.08);
+    box-shadow: 0 0 12px rgba(255,51,102,0.2);
+}
+
+.slot-role {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.pitch-slot.filled .slot-role { color: var(--gold-main); }
+
+.slot-player-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+
+.slot-player-img {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid var(--gold-main);
+    object-fit: cover;
+}
+
+.slot-player-name {
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.slot-player-ovr {
+    font-size: 11px;
+    color: var(--gold-light);
+    font-weight: 700;
+}
+
+.slot-empty-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.2);
+}
+
+.slot-remove-hint {
+    font-size: 9px;
+    color: var(--danger);
+    margin-top: 3px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.pitch-slot.filled:hover .slot-remove-hint { opacity: 1; }
+
+/* ── 케미스트리 패널 ── */
+.chemistry-panel {
+    padding: 20px;
+}
+
+.chemistry-panel h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.chem-placeholder {
+    color: var(--text-muted);
+    font-size: 13px;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.chem-score-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    gap: 12px;
+}
+
+.chem-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    min-width: 80px;
+}
+
+.chem-bar-bg {
+    flex: 1;
+    height: 8px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.chem-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+}
+
+.chem-bar-fill.low  { background: var(--danger); box-shadow: 0 0 6px var(--danger); }
+.chem-bar-fill.mid  { background: #ffaa00;        box-shadow: 0 0 6px #ffaa00; }
+.chem-bar-fill.high { background: var(--success); box-shadow: 0 0 6px var(--success); }
+
+.chem-value {
+    font-size: 13px;
+    font-weight: 700;
+    min-width: 35px;
+    text-align: right;
+}
+
+.chem-total-box {
+    margin-top: 15px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.chem-total-label {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.chem-total-score {
+    font-family: 'Outfit', sans-serif;
+    font-size: 30px;
+    font-weight: 900;
+    transition: color 0.4s;
+}
+
+.chem-ai-comment {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: rgba(0,240,255,0.05);
+    border-left: 3px solid var(--primary-neon);
+    border-radius: 0 8px 8px 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text-main);
+}

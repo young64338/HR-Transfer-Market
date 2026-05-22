@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="privacy-active">
+<body>
     <div class="app-container">
         <!-- 사이드바 -->
         <aside class="sidebar glass-panel">
@@ -21,7 +21,7 @@
             
             <nav class="nav-menu">
                 <a href="#" class="nav-item active"><i class="fa-solid fa-chart-line"></i> <span>대시보드</span></a>
-                <a href="#" class="nav-item"><i class="fa-solid fa-users"></i> <span>스카우팅 보드</span></a>
+                <a href="#" class="nav-item" id="nav-scouting"><i class="fa-solid fa-users"></i> <span>스카우팅 보드</span></a>
                 <a href="#" class="nav-item"><i class="fa-solid fa-star"></i> <span>TOTW (이주의 팀)</span></a>
                 <a href="#" class="nav-item" id="nav-training"><i class="fa-solid fa-graduation-cap"></i> <span>트레이닝 존</span></a>
             </nav>
@@ -56,9 +56,7 @@
                         <i class="fa-solid fa-bell"></i> <span>알림</span>
                         <span id="notify-badge" class="pulse-anim" style="position: absolute; top: 5px; right: 10px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%;"></span>
                     </button>
-                    <div id="gnb-privacy-toggle" class="privacy-toggle" style="padding: 6px 12px; font-size: 11px; border-radius: 6px; cursor: pointer; border: 1px solid var(--success); color: var(--success); display: flex; align-items: center; gap: 6px; transition: all 0.3s ease; background: rgba(0, 255, 153, 0.1);">
-                        <i class="fa-solid fa-shield-halved"></i> <span id="privacy-status-text">보호 ON</span>
-                    </div>
+
                     <button id="btn-create-project" class="btn-primary" style="padding: 6px 16px; font-size: 13px;"><i class="fa-solid fa-plus"></i> 팀/프로젝트 생성</button>
                 </div>
             </header>
@@ -249,6 +247,77 @@
                 </div>
                 <div id="personal-card-container" class="cards-grid" style="justify-content: flex-start;">
                     <!-- 개인 카드는 app.js에서 본인 데이터(예: EMP01)만 렌더링되도록 수정 예정 -->
+                </div>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- 5. Scouting Board Section (스카우팅 보드) -->
+            <!-- ========================================== -->
+            <section id="scouting-board-section" class="dashboard-section" style="display: none;">
+                <div class="scouting-board-container">
+
+                    <!-- 상단 헤더 -->
+                    <div class="scouting-header glass-panel">
+                        <div>
+                            <h3><i class="fa-solid fa-magnifying-glass" style="color: var(--primary-neon);"></i> 스카우팅 보드: 팀 구성 시뮬레이터</h3>
+                            <p>이적 시장 지원자들을 스쿼드에 배치하여 AI 시너지와 팀 밸런스를 미리 테스트하세요.</p>
+                        </div>
+                        <div class="scouting-header-meta">
+                            <div class="meta-badge"><i class="fa-solid fa-users"></i> <span id="squad-filled-count">0</span> / 4 배치</div>
+                            <div class="meta-badge" id="chemistry-score-badge" style="color: var(--text-muted);"><i class="fa-solid fa-atom"></i> 케미스트리 대기 중</div>
+                        </div>
+                    </div>
+
+                    <div class="squad-builder-layout">
+
+                        <!-- 좌측: 이적 시장 대기 명단 -->
+                        <div class="applicant-pool glass-panel">
+                            <h4><i class="fa-solid fa-list-check" style="color: var(--gold-main);"></i> 이적 시장 대기 명단</h4>
+                            <p class="pool-desc">인재를 클릭하여 스쿼드에 배치하세요.</p>
+                            <ul id="applicant-list"></ul>
+                        </div>
+
+                        <!-- 우측: 스쿼드 피치 + 케미스트리 -->
+                        <div class="squad-right-panel">
+
+                            <!-- 피치 영역 -->
+                            <div class="squad-pitch-area">
+                                <div class="pitch-label-top">⚽ 프로젝트 A - 선발 스쿼드</div>
+                                <!-- 포메이션: 다이아몬드 4인 (1-2-1) -->
+                                <div class="pitch-slots" id="pitch-slots">
+                                    <!-- 슬롯 1: PM (최전방) -->
+                                    <div class="pitch-slot" data-slot="0" data-role="PM (리더)" style="grid-area: top;">
+                                        <div class="slot-role">PM</div>
+                                        <div class="slot-player-info"></div>
+                                    </div>
+                                    <!-- 슬롯 2: 기획 (중앙 좌) -->
+                                    <div class="pitch-slot" data-slot="1" data-role="기획" style="grid-area: mid-left;">
+                                        <div class="slot-role">기획</div>
+                                        <div class="slot-player-info"></div>
+                                    </div>
+                                    <!-- 슬롯 3: 개발/실무 (중앙 우) -->
+                                    <div class="pitch-slot" data-slot="2" data-role="개발/실무" style="grid-area: mid-right;">
+                                        <div class="slot-role">실무</div>
+                                        <div class="slot-player-info"></div>
+                                    </div>
+                                    <!-- 슬롯 4: 서포터 (최후방) -->
+                                    <div class="pitch-slot" data-slot="3" data-role="서포터" style="grid-area: bottom;">
+                                        <div class="slot-role">서포트</div>
+                                        <div class="slot-player-info"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 케미스트리 분석 패널 -->
+                            <div class="chemistry-panel glass-panel">
+                                <h4><i class="fa-solid fa-robot" style="color: var(--primary-neon);"></i> AI 팀 케미스트리 분석</h4>
+                                <div id="chemistry-results">
+                                    <p class="chem-placeholder"><i class="fa-solid fa-arrow-up"></i> 인재를 슬롯에 배치하면 시너지를 분석합니다.</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>
@@ -626,87 +695,89 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- Reward & Transfer Bonus Modal (보상 관리) -->
+    <!-- Reward & Point Shop Modal (보상 상점) -->
     <!-- ========================================== -->
     <div id="reward-modal" class="modal-overlay">
-        <div class="modal-content glass-panel" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+        <div class="modal-content glass-panel" style="max-width: 700px; max-height: 90vh; overflow-y: auto;">
             <div class="modal-header">
-                <h2><i class="fa-solid fa-gift" style="color: var(--gold-main);"></i> 보상 및 이적 보너스 관리</h2>
+                <h2><i class="fa-solid fa-gift" style="color: var(--gold-main);"></i> 보상 상점 (Reward Shop)</h2>
                 <button class="btn-close" id="close-reward"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            
-            <div class="reward-summary-bar glass-panel" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; margin-bottom: 20px; border: 1px solid var(--gold-main); background: rgba(212,175,55,0.05);">
-                <div>
-                    <span style="font-size: 14px; color: var(--text-muted);">현재 나의 성과 포인트</span>
-                    <div style="font-size: 32px; font-weight: bold; color: var(--gold-main);">12,500 <span style="font-size: 18px;">GP</span></div>
-                </div>
-                <div style="text-align: right;">
-                    <span style="font-size: 14px; color: var(--text-muted);">이번 달 획득 포인트</span>
-                    <div style="font-size: 24px; font-weight: bold; color: var(--success);">+2,300 <span style="font-size: 14px;">GP</span></div>
-                </div>
-            </div>
 
-            <div class="dashboard-grid" style="grid-template-columns: 2fr 1fr;">
-                <!-- Left: Reward Shop -->
-                <div class="db-widget glass-panel">
-                    <h4><i class="fa-solid fa-store"></i> 보상 상점 (Point Shop)</h4>
-                    <div class="reward-shop-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
-                        <div class="reward-item-card glass-panel">
-                            <div class="item-icon" style="font-size: 24px; color: var(--gold-light); margin-bottom: 10px;"><i class="fa-solid fa-umbrella-beach"></i></div>
-                            <div class="item-info">
-                                <strong style="display: block; font-size: 14px; color: var(--text-main);">특별 휴가 1일권</strong>
-                                <span style="font-size: 12px; color: var(--gold-main);">5,000 GP</span>
+            <div class="reward-shop-container">
+
+                <!-- 포인트 헤더 -->
+                <div class="point-header glass-panel">
+                    <div class="point-left">
+                        <i class="fa-solid fa-coins" style="color: var(--gold-main); font-size: 28px;"></i>
+                        <div>
+                            <div style="font-size: 12px; color: var(--text-muted);">내 성과 포인트</div>
+                            <div style="font-size: 30px; font-weight: 900; color: var(--gold-main);">
+                                <span id="current-points">1500</span> <span style="font-size: 16px;">pt</span>
                             </div>
-                            <button class="btn-buy" style="margin-top: 10px; width: 100%; padding: 6px; background: var(--gold-main); border: none; border-radius: 4px; color: #000; font-weight: bold; cursor: pointer;" onclick="alert('교환이 완료되었습니다.')">교환</button>
                         </div>
-                        <div class="reward-item-card glass-panel">
-                            <div class="item-icon" style="font-size: 24px; color: var(--gold-light); margin-bottom: 10px;"><i class="fa-solid fa-graduation-cap"></i></div>
-                            <div class="item-info">
-                                <strong style="display: block; font-size: 14px; color: var(--text-main);">외부 교육 바우처</strong>
-                                <span style="font-size: 12px; color: var(--gold-main);">3,000 GP</span>
-                            </div>
-                            <button class="btn-buy" style="margin-top: 10px; width: 100%; padding: 6px; background: var(--gold-main); border: none; border-radius: 4px; color: #000; font-weight: bold; cursor: pointer;" onclick="alert('교환이 완료되었습니다.')">교환</button>
-                        </div>
-                        <div class="reward-item-card glass-panel">
-                            <div class="item-icon" style="font-size: 24px; color: var(--gold-light); margin-bottom: 10px;"><i class="fa-solid fa-mug-hot"></i></div>
-                            <div class="item-info">
-                                <strong style="display: block; font-size: 14px; color: var(--text-main);">사내 카페 10회권</strong>
-                                <span style="font-size: 12px; color: var(--gold-main);">1,500 GP</span>
-                            </div>
-                            <button class="btn-buy" style="margin-top: 10px; width: 100%; padding: 6px; background: var(--gold-main); border: none; border-radius: 4px; color: #000; font-weight: bold; cursor: pointer;" onclick="alert('교환이 완료되었습니다.')">교환</button>
-                        </div>
-                        <div class="reward-item-card glass-panel">
-                            <div class="item-icon" style="font-size: 24px; color: var(--gold-light); margin-bottom: 10px;"><i class="fa-solid fa-ticket"></i></div>
-                            <div class="item-info">
-                                <strong style="display: block; font-size: 14px; color: var(--text-main);">자기계발 도서 쿠폰</strong>
-                                <span style="font-size: 12px; color: var(--gold-main);">2,000 GP</span>
-                            </div>
-                            <button class="btn-buy" style="margin-top: 10px; width: 100%; padding: 6px; background: var(--gold-main); border: none; border-radius: 4px; color: #000; font-weight: bold; cursor: pointer;" onclick="alert('교환이 완료되었습니다.')">교환</button>
-                        </div>
+                    </div>
+                    <div class="point-right">
+                        <div style="font-size: 12px; color: var(--text-muted);">이번 달 획득</div>
+                        <div style="font-size: 20px; font-weight: 700; color: var(--success);">+320 pt</div>
                     </div>
                 </div>
 
-                <!-- Right: Transfer Bonus & Leaderboard -->
-                <div style="display: flex; flex-direction: column; gap: 20px;">
-                    <div class="db-widget glass-panel">
-                        <h4><i class="fa-solid fa-money-bill-trend-up"></i> 이적 보너스 시뮬레이터</h4>
-                        <p style="font-size: 12px; margin-top: 5px;">차기 프로젝트 성공 시 예상 보너스</p>
-                        <div class="bonus-sim-box" style="margin-top: 15px; padding: 15px; background: rgba(0,255,153,0.05); border: 1px dashed var(--success); border-radius: 8px; text-align: center;">
-                            <div style="font-size: 12px; color: var(--text-muted);">예상 인상률</div>
-                            <div style="font-size: 24px; font-weight: bold; color: var(--success);">+8.5%</div>
-                            <div style="font-size: 11px; margin-top: 5px;">(OVR 92 기준)</div>
-                        </div>
+                <!-- 보상 아이템 그리드 -->
+                <div class="reward-items-grid">
+
+                    <div class="reward-card glass-panel">
+                        <div class="reward-icon">☕</div>
+                        <h4>커피 기프티콘</h4>
+                        <p class="reward-cost"><i class="fa-solid fa-coins" style="color:var(--gold-main);"></i> 300 pt</p>
+                        <button class="exchange-btn btn-primary" data-name="커피 기프티콘" data-cost="300">교환하기</button>
                     </div>
 
-                    <div class="db-widget glass-panel">
-                        <h4><i class="fa-solid fa-ranking-star"></i> 명예의 전당 (Top Earners)</h4>
-                        <ul class="simple-list" style="margin-top: 10px;">
-                            <li style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);"><span>1. 김영은</span> <strong style="color: var(--gold-main);">15,200 GP</strong></li>
-                            <li style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);"><span>2. 오주영</span> <strong>12,800 GP</strong></li>
-                            <li style="display: flex; justify-content: space-between; padding: 8px 0;"><span>3. 이명철</span> <strong>11,500 GP</strong></li>
-                        </ul>
+                    <div class="reward-card glass-panel">
+                        <div class="reward-icon">🏃</div>
+                        <h4>금요일 오후 반차권</h4>
+                        <p class="reward-cost"><i class="fa-solid fa-coins" style="color:var(--gold-main);"></i> 1,000 pt</p>
+                        <button class="exchange-btn btn-primary" data-name="금요일 반차권" data-cost="1000">교환하기</button>
                     </div>
+
+                    <div class="reward-card glass-panel">
+                        <div class="reward-icon">✈️</div>
+                        <h4>리프레시 휴가 (1일)</h4>
+                        <p class="reward-cost"><i class="fa-solid fa-coins" style="color:var(--gold-main);"></i> 2,500 pt</p>
+                        <button class="exchange-btn btn-primary" data-name="리프레시 휴가 (1일)" data-cost="2500">교환하기</button>
+                    </div>
+
+                    <div class="reward-card glass-panel">
+                        <div class="reward-icon">📚</div>
+                        <h4>자기계발 도서 쿠폰</h4>
+                        <p class="reward-cost"><i class="fa-solid fa-coins" style="color:var(--gold-main);"></i> 500 pt</p>
+                        <button class="exchange-btn btn-primary" data-name="자기계발 도서 쿠폰" data-cost="500">교환하기</button>
+                    </div>
+
+                    <div class="reward-card glass-panel">
+                        <div class="reward-icon">🎓</div>
+                        <h4>외부 교육 바우처</h4>
+                        <p class="reward-cost"><i class="fa-solid fa-coins" style="color:var(--gold-main);"></i> 1,500 pt</p>
+                        <button class="exchange-btn btn-primary" data-name="외부 교육 바우처" data-cost="1500">교환하기</button>
+                    </div>
+
+                    <div class="reward-card glass-panel">
+                        <div class="reward-icon">🛋️</div>
+                        <h4>재택근무 1일권</h4>
+                        <p class="reward-cost"><i class="fa-solid fa-coins" style="color:var(--gold-main);"></i> 800 pt</p>
+                        <button class="exchange-btn btn-primary" data-name="재택근무 1일권" data-cost="800">교환하기</button>
+                    </div>
+
                 </div>
+
+                <!-- 교환 내역 (최근 3건) -->
+                <div class="reward-history glass-panel">
+                    <h4><i class="fa-solid fa-clock-rotate-left" style="color:var(--text-muted);"></i> 최근 교환 내역</h4>
+                    <ul id="reward-history-list">
+                        <li class="history-empty">아직 교환 내역이 없습니다.</li>
+                    </ul>
+                </div>
+
             </div>
         </div>
     </div>

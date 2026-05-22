@@ -725,29 +725,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Mode Toggle Functionality ---
     const modeBtns = document.querySelectorAll('.mode-btn');
-    const privacyStatusBadge = document.getElementById('gnb-privacy-toggle');
-
     modeBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             modeBtns.forEach(b => b.classList.remove('active'));
             e.target.classList.add('active');
             currentMode = e.target.getAttribute('data-mode');
-            
-            if (privacyStatusBadge) {
-                if (currentMode === 'personal') {
-                    privacyStatusBadge.querySelector('span').textContent = '정보 보호: ON (개인모드)';
-                    privacyStatusBadge.style.color = "var(--primary-neon)";
-                } else if (currentMode === 'admin') {
-                    privacyStatusBadge.querySelector('span').textContent = 'C-Level 권한: 활성';
-                    privacyStatusBadge.style.color = "var(--danger)";
-                } else if (currentMode === 'hr') {
-                    privacyStatusBadge.querySelector('span').textContent = 'HR 권한: 활성';
-                    privacyStatusBadge.style.color = "var(--gold-main)";
-                } else {
-                    privacyStatusBadge.querySelector('span').textContent = '팀장 권한: 활성';
-                    privacyStatusBadge.style.color = "var(--success)";
-                }
-            }
 
             // 모든 뷰 숨김 및 투명도 0
             const sections = [adminDashboardSection, hrDashboardSection, teamDashboardSection, personalDashboardSection];
@@ -1068,29 +1050,263 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ==========================================
-    // --- Privacy Mode Toggle Logic ---
-    // ==========================================
-    const gnbPrivacyToggleBtn = document.getElementById('gnb-privacy-toggle');
-    const privacyStatusTextLabel = document.getElementById('privacy-status-text');
-
-    if (gnbPrivacyToggleBtn) {
-        gnbPrivacyToggleBtn.addEventListener('click', () => {
-            const isPrivacyActive = document.body.classList.toggle('privacy-active');
-            
-            if (isPrivacyActive) {
-                gnbPrivacyToggleBtn.classList.remove('off');
-                if(privacyStatusTextLabel) privacyStatusTextLabel.textContent = "보호 ON";
-                gnbPrivacyToggleBtn.querySelector('i').className = "fa-solid fa-shield-halved";
-            } else {
-                gnbPrivacyToggleBtn.classList.add('off');
-                if(privacyStatusTextLabel) privacyStatusTextLabel.textContent = "보호 OFF";
-                gnbPrivacyToggleBtn.querySelector('i').className = "fa-solid fa-shield";
-                alert("🔓 개인정보 보호 모드가 해제되었습니다. 모든 민감 데이터가 노출됩니다.");
-            }
-        });
-    }
 
     // Initial render
     renderCards();
+
+    // ============================================
+    // === Scouting Board (Squad Builder) Logic ===
+    // ============================================
+
+    // 스카우팅 보드 전용 상태
+    let squadSlots = [null, null, null, null]; // 4개 슬롯 (null = 비어있음)
+
+    // ── 사이드바 nav 전환 이벤트 (대시보드, 스카우팅 보드 등) ──
+    // 모든 섹션을 숨기고 특정 섹션만 보여주는 공통 함수
+    function showSection(targetId, activeModeBtn) {
+        // 모든 dashboard-section 숨기기
+        document.querySelectorAll('.dashboard-section').forEach(s => {
+            s.style.opacity = 0;
+            setTimeout(() => { s.style.display = 'none'; }, 200);
+        });
+        // nav-item 활성화 갱신
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+        setTimeout(() => {
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.style.display = 'block';
+                void target.offsetWidth;
+                target.style.opacity = 1;
+                target.style.transition = 'opacity 0.3s ease';
+            }
+        }, 220);
+    }
+
+    // 사이드바 '대시보드' 클릭 → 현재 mode에 해당하는 섹션으로 복귀
+    const navDashboard = document.querySelector('.nav-menu .nav-item:first-child');
+    if (navDashboard) {
+        navDashboard.addEventListener('click', (e) => {
+            e.preventDefault();
+            // currentMode 기준으로 해당 섹션 표시
+            const modeToSection = {
+                admin: 'admin-dashboard-section',
+                hr: 'hr-dashboard-section',
+                team: 'team-dashboard-section',
+                personal: 'personal-dashboard-section'
+            };
+            const targetId = modeToSection[currentMode] || 'team-dashboard-section';
+            showSection(targetId);
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            navDashboard.classList.add('active');
+            // 카드 재렌더링
+            setTimeout(() => renderCards(), 250);
+        });
+    }
+
+    // 사이드바 '스카우팅 보드' 클릭
+    const navScouting = document.getElementById('nav-scouting');
+    if (navScouting) {
+        navScouting.addEventListener('click', (e) => {
+            e.preventDefault();
+            showSection('scouting-board-section');
+            navScouting.classList.add('active');
+            setTimeout(() => initScoutingBoard(), 250);
+        });
+    }
+
+    // 대기 명단 렌더링
+    function renderApplicantList() {
+        const list = document.getElementById('applicant-list');
+        if (!list) return;
+        list.innerHTML = '';
+
+        players.forEach(player => {
+            // 이미 슬롯에 배치됐으면 inSquad 처리
+            const inSquad = squadSlots.includes(player.id);
+            const li = document.createElement('li');
+            li.className = `applicant-item ${inSquad ? 'in-squad' : ''}`;
+            li.dataset.id = player.id;
+            li.innerHTML = `
+                <img class="applicant-avatar" src="${player.imgUrl}" alt="${player.name}">
+                <div class="applicant-info">
+                    <div class="applicant-name">${player.name}</div>
+                    <div class="applicant-role">${player.role} · ${player.dept}</div>
+                </div>
+                <div class="applicant-ovr">${player.overall}</div>
+            `;
+            if (!inSquad) {
+                li.addEventListener('click', () => addToSquad(player.id));
+            }
+            list.appendChild(li);
+        });
+    }
+
+    // 피치 슬롯 렌더링
+    function renderPitchSlots() {
+        const slots = document.querySelectorAll('.pitch-slot');
+        slots.forEach((slotEl, idx) => {
+            const playerId = squadSlots[idx];
+            const roleName = slotEl.dataset.role;
+            const slotInfo = slotEl.querySelector('.slot-player-info');
+            const slotRole = slotEl.querySelector('.slot-role');
+
+            if (playerId) {
+                // 배치된 선수가 있는 경우
+                const p = players.find(x => x.id === playerId);
+                slotEl.classList.add('filled');
+                slotRole.textContent = roleName;
+                slotInfo.innerHTML = `
+                    <img class="slot-player-img" src="${p.imgUrl}" alt="${p.name}">
+                    <div class="slot-player-name">${p.name}</div>
+                    <div class="slot-player-ovr">OVR ${p.overall}</div>
+                    <div class="slot-remove-hint">클릭하여 제거</div>
+                `;
+                // 클릭 시 제거
+                slotEl.onclick = () => removeFromSquad(idx);
+            } else {
+                // 빈 슬롯
+                slotEl.classList.remove('filled');
+                slotRole.textContent = roleName;
+                slotInfo.innerHTML = `<div class="slot-empty-label">+ 배치</div>`;
+                slotEl.onclick = null;
+            }
+        });
+
+        // 배치 인원 수 업데이트
+        const filledCount = squadSlots.filter(s => s !== null).length;
+        const countEl = document.getElementById('squad-filled-count');
+        if (countEl) countEl.textContent = filledCount;
+    }
+
+    // 선수를 스쿼드에 추가
+    function addToSquad(playerId) {
+        // 이미 배치된 경우 방지
+        if (squadSlots.includes(playerId)) return;
+        // 빈 슬롯 찾기
+        const emptyIdx = squadSlots.indexOf(null);
+        if (emptyIdx === -1) {
+            showScoutToast('스쿼드가 가득 찼습니다! (최대 4명)');
+            return;
+        }
+        squadSlots[emptyIdx] = playerId;
+        renderApplicantList();
+        renderPitchSlots();
+        updateChemistry();
+    }
+
+    // 선수를 스쿼드에서 제거
+    function removeFromSquad(slotIdx) {
+        squadSlots[slotIdx] = null;
+        renderApplicantList();
+        renderPitchSlots();
+        updateChemistry();
+    }
+
+    // AI 케미스트리 계산 및 UI 업데이트
+    function updateChemistry() {
+        const chemResults = document.getElementById('chemistry-results');
+        const chemBadge = document.getElementById('chemistry-score-badge');
+        if (!chemResults) return;
+
+        const filledIds = squadSlots.filter(s => s !== null);
+        if (filledIds.length === 0) {
+            chemResults.innerHTML = `<p class="chem-placeholder"><i class="fa-solid fa-arrow-up"></i> 인재를 슬롯에 배치하면 시너지를 분석합니다.</p>`;
+            if (chemBadge) { chemBadge.textContent = '케미스트리 대기 중'; chemBadge.style.color = 'var(--text-muted)'; }
+            return;
+        }
+
+        const filledPlayers = filledIds.map(id => players.find(p => p.id === id));
+
+        // ── 1) Overall 전력 (배치된 인원 OVR 평균) ──
+        const avgOvr = Math.round(filledPlayers.reduce((sum, p) => sum + p.overall, 0) / filledPlayers.length);
+
+        // ── 2) 협업 시너지 (COP 스탯 평균, 없으면 stats.cop 사용) ──
+        const avgCop = Math.round(filledPlayers.reduce((sum, p) => sum + (p.stats.cop || 80), 0) / filledPlayers.length);
+
+        // ── 3) 다양성 보너스 (부서가 다를수록 +점수) ──
+        const depts = new Set(filledPlayers.map(p => p.dept));
+        const diversityScore = Math.min(100, 60 + (depts.size - 1) * 15); // 부서 수에 따라 보너스
+
+        // ── 4) 리스크 패널티 (Transfer List 인원이 있으면 감점) ──
+        const riskCount = filledPlayers.filter(p => p.status === 'Transfer List').length;
+        const riskPenalty = riskCount * 10;
+
+        // ── 5) 최종 케미스트리 점수 ──
+        const rawTotal = Math.round((avgOvr * 0.4 + avgCop * 0.3 + diversityScore * 0.3) - riskPenalty);
+        const totalScore = Math.max(0, Math.min(100, rawTotal));
+
+        // ── 색상 결정 ──
+        const getBarClass = (val) => val >= 75 ? 'high' : val >= 50 ? 'mid' : 'low';
+        const getTotalColor = (val) => val >= 75 ? 'var(--success)' : val >= 50 ? '#ffaa00' : 'var(--danger)';
+
+        // ── AI 코멘트 생성 ──
+        let aiComment = '';
+        if (totalScore >= 85) {
+            aiComment = '🔥 <strong>최강 팀 구성!</strong> 역량과 협업력이 탁월합니다. 이 팀이라면 프로젝트 성공률이 매우 높습니다.';
+        } else if (totalScore >= 70) {
+            aiComment = '✅ <strong>균형 잡힌 팀</strong>입니다. 역량 다양성이 우수하며 안정적인 프로젝트 수행이 가능합니다.';
+        } else if (totalScore >= 50) {
+            aiComment = '⚠️ <strong>보완이 필요합니다.</strong> 특정 역량이 집중되어 있거나 협업 경험이 부족합니다. 다른 부서 인재를 추가하세요.';
+        } else {
+            aiComment = '🚨 <strong>팀 구성 위험!</strong> 성과 리스크가 높습니다. 집중 관리 대상 인원을 재검토해 주세요.';
+        }
+
+        // ── UI 렌더링 ──
+        chemResults.innerHTML = `
+            <div class="chem-score-row">
+                <span class="chem-label">팀 전력 (OVR)</span>
+                <div class="chem-bar-bg"><div class="chem-bar-fill ${getBarClass(avgOvr)}" style="width:${avgOvr}%;"></div></div>
+                <span class="chem-value" style="color:${getTotalColor(avgOvr)};">${avgOvr}</span>
+            </div>
+            <div class="chem-score-row">
+                <span class="chem-label">협업 시너지</span>
+                <div class="chem-bar-bg"><div class="chem-bar-fill ${getBarClass(avgCop)}" style="width:${avgCop}%;"></div></div>
+                <span class="chem-value" style="color:${getTotalColor(avgCop)};">${avgCop}</span>
+            </div>
+            <div class="chem-score-row">
+                <span class="chem-label">역량 다양성</span>
+                <div class="chem-bar-bg"><div class="chem-bar-fill ${getBarClass(diversityScore)}" style="width:${diversityScore}%;"></div></div>
+                <span class="chem-value" style="color:${getTotalColor(diversityScore)};">${diversityScore}</span>
+            </div>
+            ${riskPenalty > 0 ? `
+            <div class="chem-score-row">
+                <span class="chem-label" style="color:var(--danger);">리스크 패널티</span>
+                <div class="chem-bar-bg"><div class="chem-bar-fill low" style="width:${riskPenalty * 5}%;"></div></div>
+                <span class="chem-value" style="color:var(--danger);">-${riskPenalty}</span>
+            </div>` : ''}
+            <div class="chem-total-box">
+                <span class="chem-total-label">🤖 AI 케미스트리 총점</span>
+                <span class="chem-total-score" style="color:${getTotalColor(totalScore)};">${totalScore}<span style="font-size:16px;">/100</span></span>
+            </div>
+            <div class="chem-ai-comment">${aiComment}</div>
+        `;
+
+        // 배지 업데이트
+        if (chemBadge) {
+            chemBadge.innerHTML = `<i class="fa-solid fa-atom"></i> 케미스트리 ${totalScore}점`;
+            chemBadge.style.color = getTotalColor(totalScore);
+        }
+    }
+
+    // 스카우팅 전용 토스트
+    function showScoutToast(msg) {
+        const existing = document.querySelector('.scout-toast');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'scout-toast';
+        toast.style.cssText = 'position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:var(--danger); color:#fff; padding:12px 24px; border-radius:20px; font-weight:bold; z-index:99999; font-size:13px; box-shadow:0 4px 20px rgba(255,51,102,0.4);';
+        toast.textContent = msg;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2500);
+    }
+
+    // 스카우팅 보드 초기화
+    function initScoutingBoard() {
+        squadSlots = [null, null, null, null]; // 슬롯 초기화
+        renderApplicantList();
+        renderPitchSlots();
+        updateChemistry();
+    }
+
 });

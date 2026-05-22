@@ -33,6 +33,41 @@ body {
     overflow-x: hidden;
 }
 
+/* ========================================== */
+/* --- [신규] 전역 스크롤바 스타일 커스텀 --- */
+/* ========================================== */
+
+/* WebKit 브라우저 (Chrome, Safari, Edge, Whale 등) 전용 */
+::-webkit-scrollbar {
+    width: 8px;  /* 세로 스크롤바 두께 */
+    height: 8px; /* 가로 스크롤바 두께 */
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02); /* 스크롤 레일 배경을 거의 투명하게 처리 */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15); /* 스크롤바 핸들을 옅은 반투명 회색으로 적용 */
+    border: 2px solid transparent;          /* 투명 테두리를 주어 스크롤 바가 슬림하게 뜨도록 조절 */
+    background-clip: padding-box;           /* 테두리 공간만큼 배경을 잘라내어 슬림화 */
+    border-radius: 10px;
+    transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-neon);        /* 마우스를 올리면 포인트 네온 컬러로 밝아집니다 */
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+/* Firefox 브라우저 전용 스크롤바 색상 및 두께 표준 적용 */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) rgba(255, 255, 255, 0.02);
+}
+
 /* Glassmorphism Utilities */
 .glass-panel {
     background: var(--bg-surface);

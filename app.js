@@ -1239,16 +1239,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextGrwText = document.getElementById('next-grw');
     const successMsg = document.getElementById('training-success-msg');
 
+    /**
+     * [신규] 트레이닝 모달 데이터를 로그인한 사용자의 정보로 동적 업데이트합니다.
+     * 사용자가 초보자이므로 각 로직의 역할에 대해 한글 주석으로 상세 기술합니다.
+     */
+    function updateTrainingModalData() {
+        // 로그인한 사용자가 없으면 기본적으로 'EMP04' 김건우 데이터를 백업용으로 활용합니다.
+        const user = currentUser || players.find(p => p.id === 'EMP04');
+        const trainingPcName = document.getElementById('training-pc-name');
+        const currentGrwText = document.getElementById('current-grw');
+        const nextGrwText = document.getElementById('next-grw');
+
+        // 1. 모달 내부 프리뷰 카드의 이름을 '[사원번호] 이름' 형태로 동적 변경합니다.
+        if (trainingPcName) {
+            trainingPcName.textContent = `[${user.id}] ${user.name}`;
+        }
+        // 2. 현재 성장(GRW) 스탯을 해당 직원의 실제 수치로 변경합니다.
+        if (currentGrwText) {
+            currentGrwText.textContent = user.stats.grw;
+        }
+        // 3. 예상 성장(GRW) 스탯을 실제 성장 스탯 + 3 으로 설정하되, 최대 한계치인 100을 넘지 않도록 제한합니다.
+        if (nextGrwText) {
+            nextGrwText.textContent = Math.min(user.stats.grw + 3, 100);
+            nextGrwText.style.color = "var(--primary-neon)";
+            nextGrwText.style.textShadow = "";
+        }
+    }
+
     if (btnOpenTrainingUpload && trainingModal) {
         btnOpenTrainingUpload.addEventListener('click', (e) => {
             e.preventDefault();
-            // Nested Modal로 띄움 (기존 로직 초기화)
-            if(nextGrwText) {
-                nextGrwText.textContent = "95";
-                nextGrwText.style.color = "var(--primary-neon)";
-            }
-            if(successMsg) successMsg.style.display = 'none';
+            // [신규] 로그인한 유저 정보를 기준으로 트레이닝 프리뷰 카드를 실시간 갱신합니다.
+            updateTrainingModalData();
             
+            if(successMsg) successMsg.style.display = 'none';
             trainingModal.classList.add('show');
         });
     }
@@ -1259,11 +1283,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (navTraining && trainingModal) {
         navTraining.addEventListener('click', (e) => {
             e.preventDefault();
+            // [신규] 로그인한 유저 정보를 기준으로 트레이닝 프리뷰 카드를 실시간 갱신합니다.
+            updateTrainingModalData();
+            
+            if(successMsg) successMsg.style.display = 'none';
             trainingModal.classList.add('show');
-            // 초기화
-            nextGrwText.textContent = "95";
-            nextGrwText.style.color = "var(--primary-neon)";
-            successMsg.style.display = 'none';
         });
 
         closeTrainingBtn.addEventListener('click', () => {
@@ -1279,6 +1303,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 훈련 제출 및 스탯 상승 시뮬레이션
         btnSubmitTraining.addEventListener('click', () => {
+            // [신규] 로그인 유저 기준으로 대상 지정 (없을 경우 EMP04 백업 활용)
+            const user = currentUser || players.find(p => p.id === 'EMP04');
+            const targetPlayer = players.find(p => p.id === user.id);
+            
+            // 기존 성장(GRW) 스탯을 기준으로 최종 상승치를 계산합니다. (기본 +6 상승하며 최대 100 제한)
+            const currentGrw = targetPlayer ? targetPlayer.stats.grw : 92;
+            const newGrw = Math.min(currentGrw + 6, 100);
+
             const btnIcon = btnSubmitTraining.querySelector('i');
             btnIcon.className = 'fa-solid fa-spinner fa-spin';
             btnSubmitTraining.disabled = true;
@@ -1290,20 +1322,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnSubmitTraining.style.background = 'var(--success)';
                 btnSubmitTraining.style.color = '#000';
                 
-                // 스탯 상승 애니메이션
-                nextGrwText.textContent = "98";
+                // 스탯 상승 애니메이션 (로그인 유저 기준의 수치로 바인딩)
+                nextGrwText.textContent = newGrw;
                 nextGrwText.style.color = "var(--gold-main)";
                 nextGrwText.style.textShadow = "0 0 15px var(--gold-main)";
                 
                 // 성공 메시지 출력
                 successMsg.style.display = 'block';
                 
-                // 메인 카드 데이터 연동 (시뮬레이션: EMP04 김건우의 GRW를 98로 변경 후 리렌더링)
-                const targetPlayer = players.find(p => p.id === 'EMP04');
+                // [신규] 로그인 유저의 실제 데이터 연동 및 스탯 계산
                 if(targetPlayer) {
-                    targetPlayer.stats.grw = 98;
+                    targetPlayer.stats.grw = newGrw;
                     targetPlayer.overall = Math.round((targetPlayer.stats.prf + targetPlayer.stats.cop + targetPlayer.stats.grw) / 3);
-                    renderCards(); // 백그라운드에서 카드 다시 그리기
+                    renderCards(); // 백그라운드 및 대시보드 카드 실시간 다시 그리기
                 }
 
                 // 버튼 원상복구 로직 (3초 후 닫을 수 있도록 안내)

@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     
     // --- DB: Employee Roster (Sample 5) ---
+    // 각 임직원의 실시간 업무 부하량(workload) 및 수료/진행 중인 교육 정보(trainingHistory)를 추가합니다.
     const players = [
         {
             id: "EMP01",
@@ -9,14 +10,20 @@ document.addEventListener('DOMContentLoaded', () => {
             dept: "AI 융합기획팀",
             overall: 92, // (92+88+95)/3 대체값
             stats: {
-                prf: 92, // Performance
-                cop: 88, // Cooperation
-                grw: 95  // Growth
+                prf: 92, // Performance (성과)
+                cop: 88, // Cooperation (협업)
+                grw: 95  // Growth (자기계발)
             },
             matchRating: "9.2",
             highlight: "AI 융합 응용력 우수, 트렌드 리더",
             status: "TOTW",
-            imgUrl: "https://i.pravatar.cc/150?img=47"
+            imgUrl: "https://i.pravatar.cc/150?img=47",
+            workload: 135, // 실시간 업무 부하량: 135% (업무 과부하 알림 연동 대상)
+            trainingHistory: [
+                { name: "AI 융합 응용 기획 마스터", status: "Completed", info: "2026.02" },
+                { name: "파이썬 데이터 분석 실무", status: "Completed", info: "2025.11" },
+                { name: "LLM Fine-tuning 실무 워크숍", status: "In Progress", info: 70 }
+            ]
         },
         {
             id: "EMP02",
@@ -32,7 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
             matchRating: "8.5",
             highlight: "유연한 업무 대처, 결제 프로세스 우수",
             status: "Normal",
-            imgUrl: "https://i.pravatar.cc/150?img=11"
+            imgUrl: "https://i.pravatar.cc/150?img=11",
+            workload: 95, // 실시간 업무 부하량: 95% (보통 수준)
+            trainingHistory: [
+                { name: "세무회계 마스터 가이드", status: "Completed", info: "2025.12" },
+                { name: "스마트 정산 자동화 프로세스", status: "Completed", info: "2026.01" },
+                { name: "AI 기반 재무 예측 기초", status: "In Progress", info: 45 }
+            ]
         },
         {
             id: "EMP03",
@@ -48,7 +61,13 @@ document.addEventListener('DOMContentLoaded', () => {
             matchRating: "8.1",
             highlight: "창의적 기획, 커뮤니케이션 우수",
             status: "Normal",
-            imgUrl: "https://i.pravatar.cc/150?img=5"
+            imgUrl: "https://i.pravatar.cc/150?img=5",
+            workload: 80, // 실시간 업무 부하량: 80% (보통 수준)
+            trainingHistory: [
+                { name: "브랜드 포지셔닝 전략", status: "Completed", info: "2025.10" },
+                { name: "구글 애널리틱스 GA4 완벽 분석", status: "Completed", info: "2026.02" },
+                { name: "소셜 미디어 마케팅 자동화", status: "In Progress", info: 80 }
+            ]
         },
         {
             id: "EMP04",
@@ -64,7 +83,13 @@ document.addEventListener('DOMContentLoaded', () => {
             matchRating: "7.8",
             highlight: "어학 스탯 우수 (OPIc, TOEIC, G-TELP)",
             status: "Normal",
-            imgUrl: "https://i.pravatar.cc/150?img=60"
+            imgUrl: "https://i.pravatar.cc/150?img=60",
+            workload: 60, // 실시간 업무 부하량: 60% (쾌적 수준)
+            trainingHistory: [
+                { name: "비즈니스 영어 회화 실무", status: "Completed", info: "2025.09" },
+                { name: "글로벌 비즈니스 협상 기법", status: "Completed", info: "2026.01" },
+                { name: "제2외국어(일본어) 회화", status: "In Progress", info: 50 }
+            ]
         },
         {
             id: "EMP05",
@@ -80,7 +105,12 @@ document.addEventListener('DOMContentLoaded', () => {
             matchRating: "5.2",
             highlight: "잦은 마감 지연, 소통 오류 (집중 관리 필요)",
             status: "Transfer List",
-            imgUrl: "https://i.pravatar.cc/150?img=33"
+            imgUrl: "https://i.pravatar.cc/150?img=33",
+            workload: 110, // 실시간 업무 부하량: 110% (다소 높음 / 집중 관리 대상)
+            trainingHistory: [
+                { name: "오피스 실무 기초 (엑셀, PPT)", status: "Completed", info: "2025.08" },
+                { name: "스마트 업무 협업 도구 기초", status: "In Progress", info: 30 }
+            ]
         },
         {
             id: "EMP06",
@@ -96,7 +126,13 @@ document.addEventListener('DOMContentLoaded', () => {
             matchRating: "8.8",
             highlight: "우수한 소통 및 리더십, HR 평가 기획 우수",
             status: "Normal",
-            imgUrl: "https://i.pravatar.cc/150?img=12"
+            imgUrl: "https://i.pravatar.cc/150?img=12",
+            workload: 70, // 실시간 업무 부하량: 70% (쾌적 수준)
+            trainingHistory: [
+                { name: "전략적 인적자원관리(HRM)", status: "Completed", info: "2025.11" },
+                { name: "팀 빌딩 및 조직 커뮤니케이션", status: "Completed", info: "2026.03" },
+                { name: "AI 사내 인사 배치 예측 모델", status: "In Progress", info: 90 }
+            ]
         }
     ];
 
@@ -291,9 +327,10 @@ document.addEventListener('DOMContentLoaded', () => {
             li.className = `task-item ${isCompleted ? 'complete' : ''}`;
             li.dataset.id = task.id;
 
+            // [수정] 완료 시 disabled 속성을 주던 부분을 삭제하여 체크 해제가 가능하도록 만들었습니다.
             li.innerHTML = `
                 <div class="task-checkbox-container">
-                    <input type="checkbox" class="task-checkbox" ${isCompleted ? 'checked disabled' : ''} data-id="${task.id}">
+                    <input type="checkbox" class="task-checkbox" ${isCompleted ? 'checked' : ''} data-id="${task.id}">
                 </div>
                 <div class="task-content">
                     <div class="task-title">${task.name}</div>
@@ -307,58 +344,71 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
 
-            // 아직 완료되지 않은 일만 체크박스 변경 감지
-            if (!isCompleted) {
-                const checkbox = li.querySelector('.task-checkbox');
-                checkbox.addEventListener('change', () => {
-                    if (checkbox.checked) {
-                        toggleTaskCompletion(task.id);
-                    }
-                });
-            }
+            // [수정] 아직 완료되지 않은 일뿐만 아니라, 이미 완료된 일도 체크박스 변경을 감지할 수 있도록 하였습니다.
+            const checkbox = li.querySelector('.task-checkbox');
+            checkbox.addEventListener('change', () => {
+                toggleTaskCompletion(task.id);
+            });
 
             taskListContainer.appendChild(li);
         });
     }
 
     /**
-     * 특정 할 일을 완료 상태로 토글하고,
-     * 보상 포인트 (+100 pt) 지급 및 능력치(GRW, PRF) 미세 상승 시뮬레이션을 수행합니다.
+     * [수정] 특정 할 일을 완료 및 완료 취소 상태로 토글하고,
+     * 보상 포인트 (+100 pt / -100 pt) 지급 및 능력치(GRW, PRF) 변동 시뮬레이션을 수행합니다.
      * @param {string} taskId - 처리할 태스크의 고유 식별자
      */
     function toggleTaskCompletion(taskId) {
         const task = userTasks.find(t => t.id === taskId);
         if (!task) return;
 
-        task.completed = true;
-        task.completedAt = new Date().toISOString();
+        // 현재 상태를 반대로 토글 처리합니다.
+        const newStatus = !task.completed;
+        task.completed = newStatus;
+        task.completedAt = newStatus ? new Date().toISOString() : null;
 
-        // 1. 포인트 보상 지급 (+100 pt) 및 화면 연동
-        userPoints += 100;
-        updatePointsUI();
-
-        // 2. 능력치 상승 시뮬레이션 (로그인한 사용자 본인 기준)
-        // 현재 로그인한 사용자가 존재하면 해당 ID를 사용하고, 없을 경우 기본값으로 'EMP01'을 사용합니다.
+        // 현재 로그인한 사용자 본인 정보를 가져옵니다. 없을 경우 기본값으로 'EMP01'을 사용합니다.
         const myId = currentUser ? currentUser.id : 'EMP01';
         const targetPlayer = players.find(p => p.id === myId);
-        if (targetPlayer) {
-            // 태스크 완수에 따라 PRF(해결력) 및 GRW(성장성) 스탯 1씩 점진적 상승
-            targetPlayer.stats.prf = Math.min(99, targetPlayer.stats.prf + 1);
-            targetPlayer.stats.grw = Math.min(99, targetPlayer.stats.grw + 1);
-            // 종합 능력치(OVR) 재계산 및 카드 리렌더링
-            targetPlayer.overall = Math.round((targetPlayer.stats.prf + targetPlayer.stats.cop + targetPlayer.stats.grw) / 3);
-            renderCards();
-        }
 
-        // 3. 토스트 및 알림 메시지 출력
-        showToast(`태스크 완료! +100 pt 획득 및 성과 능력치가 상승했습니다.`);
+        if (newStatus) {
+            // [완료 처리] 1. 포인트 보상 지급 (+100 pt) 및 화면 반영
+            userPoints += 100;
+            updatePointsUI();
+
+            // [완료 처리] 2. 능력치 상승 시뮬레이션
+            if (targetPlayer) {
+                targetPlayer.stats.prf = Math.min(99, targetPlayer.stats.prf + 1); // 최대 99 한계 설정
+                targetPlayer.stats.grw = Math.min(99, targetPlayer.stats.grw + 1); // 최대 99 한계 설정
+                targetPlayer.overall = Math.round((targetPlayer.stats.prf + targetPlayer.stats.cop + targetPlayer.stats.grw) / 3);
+                renderCards();
+            }
+
+            // [완료 처리] 3. 토스트 및 알림 메시지 출력
+            showToast(`태스크 완료! +100 pt 획득 및 성과 능력치가 상승했습니다.`);
+        } else {
+            // [완료 취소 처리] 1. 지급받았던 포인트 회수 (-100 pt, 단 0 이하로 떨어지는 것 방지)
+            userPoints = Math.max(0, userPoints - 100);
+            updatePointsUI();
+
+            // [완료 취소 처리] 2. 상승했던 능력치 원상 복구 (최저 한계선 50 이하로 하락 방지)
+            if (targetPlayer) {
+                targetPlayer.stats.prf = Math.max(50, targetPlayer.stats.prf - 1);
+                targetPlayer.stats.grw = Math.max(50, targetPlayer.stats.grw - 1);
+                targetPlayer.overall = Math.round((targetPlayer.stats.prf + targetPlayer.stats.cop + targetPlayer.stats.grw) / 3);
+                renderCards();
+            }
+
+            // [완료 취소 처리] 3. 토스트 및 알림 메시지 출력
+            showToast(`태스크 완료가 취소되었습니다. (포인트 및 능력치가 복구되었습니다)`);
+        }
 
         // 4. 할 일 목록 리렌더링
         renderTasks();
 
         // 5. Context Tracker 병목 분석 실시간 업데이트
         if (loopStates.context.state === 'In Progress') {
-            // 할 일 완료에 따라 지연 상태가 개선되는 흐름 시뮬레이션
             updateLoopBadges();
         }
     }
@@ -810,11 +860,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     </tr>
                     <tr>
                         <th>업무 부담도</th>
-                        ${selectedPlayers.map(p => `
-                            <td style="text-align:center; color:${p.overall > 90 ? 'var(--danger)' : 'var(--success)'}; font-weight:bold;">
-                                ${p.overall > 90 ? '⚠️ High (과부하)' : '✅ Normal (안정)'}
-                            </td>
-                        `).join('')}
+                        ${selectedPlayers.map(p => {
+                            // 플레이어별 workload 값에 따라 위험 수준(High, Moderate, Low)과 색상을 판단합니다.
+                            const wl = p.workload !== undefined ? p.workload : 75;
+                            let statusText = "✅ Low (안정)";
+                            let statusColor = "var(--success)";
+                            
+                            if (wl >= 110) {
+                                statusText = "⚠️ High (과부하)";
+                                statusColor = "var(--danger)";
+                            } else if (wl >= 80) {
+                                statusText = "⚠️ Moderate (주의)";
+                                statusColor = "#ffaa00"; // 보통/주의 경고색
+                            }
+                            
+                            return `
+                                <td style="text-align:center; color:${statusColor}; font-weight:bold;">
+                                    ${statusText} (${wl}%)
+                                </td>
+                            `;
+                        }).join('')}
                     </tr>
                     <tr>
                         <th>AI 팀 시너지 분석</th>
@@ -885,15 +950,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 업무 부담 확인 모달 렌더링 ---
+    // 기존의 OVR 점수 기준(player.overall > 90) 하드코딩에서, 실제 개인별 workload(실시간 업무 부하량) 데이터를 기반으로
+    // 위험 수준, 위험 색상, 경고 메시지, 진행 중인 프로젝트 수 등을 동적으로 계산하여 시각화합니다.
     function openWorkloadCheck(player) {
         const modal = document.getElementById('workload-check-modal');
         const content = document.getElementById('workload-check-content');
         if(!modal || !content) return;
 
-        const isOverloaded = player.overall > 90;
-        const riskLevel = isOverloaded ? "High" : "Low";
-        const riskColor = isOverloaded ? "var(--danger)" : "var(--success)";
-        const loadPercent = isOverloaded ? 135 : 75;
+        // 개인별 부하량 데이터가 없는 경우 기본값 75% 적용
+        const loadPercent = player.workload !== undefined ? player.workload : 75;
+        let riskLevel = "Low";
+        let riskColor = "var(--success)";
+        let projectCount = "2건";
+        let urgentTaskCount = "0건";
+        let adviceMessage = "✅ 추가 업무 수행이 가능한 여유가 있습니다.";
+
+        // 부하량 수치에 따른 등급 세분화 (110% 이상: 위험, 80% 이상: 보통/주의, 80% 미만: 안정)
+        if (loadPercent >= 110) {
+            riskLevel = "High";
+            riskColor = "var(--danger)";
+            projectCount = "4건";
+            urgentTaskCount = "3건";
+            adviceMessage = "⚠️ 추가 업무 배정 시 과부하로 인한 성과 하락이 우려됩니다.";
+        } else if (loadPercent >= 80) {
+            riskLevel = "Moderate";
+            riskColor = "#ffaa00"; // 주황색 톤의 경고 색상
+            projectCount = "3건";
+            urgentTaskCount = "1건";
+            adviceMessage = "⚠️ 현재 업무량이 채워진 상태이므로 추가 배정 시 세심한 조율이 필요합니다.";
+        } else {
+            riskLevel = "Low";
+            riskColor = "var(--success)";
+            projectCount = "2건";
+            urgentTaskCount = "0건";
+            adviceMessage = "✅ 추가 업무 수행이 가능한 여유가 있습니다.";
+        }
 
         content.innerHTML = `
             <div style="padding: 10px;">
@@ -905,16 +996,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     <i class="fa-solid fa-battery-three-quarters" style="font-size:40px; color:${riskColor};"></i>
                 </div>
                 <div class="workload-gauge">
-                    <div class="workload-fill" style="width:${loadPercent}%; background:${riskColor};"></div>
+                    <div class="workload-fill" style="width:${Math.min(loadPercent, 100)}%; background:${riskColor};"></div>
                 </div>
                 <div style="display:flex; justify-content:space-between; font-size:11px; margin-top:5px; color:var(--text-muted);">
                     <span>팀 평균 업무량 대비</span>
                     <span style="color:${riskColor}; font-weight:bold;">${loadPercent}%</span>
                 </div>
                 <div style="margin-top:25px; font-size:13px; line-height:1.6;">
-                    <p>• 진행 중인 프로젝트: <strong>${isOverloaded ? '4건' : '2건'}</strong></p>
-                    <p>• 마감 임박 업무: <strong>${isOverloaded ? '3건' : '0건'}</strong></p>
-                    <p style="margin-top:10px; color:${riskColor};">${isOverloaded ? '⚠️ 추가 업무 배정 시 과부하로 인한 성과 하락이 우려됩니다.' : '✅ 추가 업무 수행이 가능한 여유가 있습니다.'}</p>
+                    <p>• 진행 중인 프로젝트: <strong>${projectCount}</strong></p>
+                    <p>• 마감 임박 업무: <strong>${urgentTaskCount}</strong></p>
+                    <p style="margin-top:10px; color:${riskColor};">${adviceMessage}</p>
                 </div>
             </div>
         `;
@@ -1050,13 +1141,222 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 3. 교육훈련 탭 렌더링
+    // 각 직원의 trainingHistory 배열을 분석하여 수료 완료(Completed) 및 진행 중(In Progress) 교육 목록을 
+    // 프로그레스바 및 전용 아이콘으로 시각화하며, 직무 성격에 적합한 AI 맞춤 훈련 제안을 동적으로 렌더링합니다.
     function renderTrainingTab(player) {
-        return `<div style="padding: 10px;"><h4 style="color:var(--gold-main);">수료 완료 및 진행 중인 교육</h4></div>`;
+        const history = player.trainingHistory || [];
+        
+        // 1. 수료 완료 교육과 진행 중인 교육 분류
+        const completedCourses = history.filter(c => c.status === "Completed");
+        const inProgressCourses = history.filter(c => c.status === "In Progress");
+
+        // 2. 직무별 맞춤 AI 추천 교육 정보 매핑
+        let aiRecommendedCourse = { name: "기본 실무 역량 강화 과정", effect: "GRW +2" };
+        if (player.id === "EMP01") {
+            aiRecommendedCourse = { name: "AI 에이전트 개발 실무 마스터", effect: "자기계발(GRW) 스탯 +4 상승" };
+        } else if (player.id === "EMP02") {
+            aiRecommendedCourse = { name: "파이썬 활용 업무 자동화(RPA) 중급", effect: "문제해결(PRF) 스탯 +3 상승" };
+        } else if (player.id === "EMP03") {
+            aiRecommendedCourse = { name: "퍼포먼스 마케팅과 매체 최적화 기법", effect: "협업능력(COP) 스탯 +3 상승" };
+        } else if (player.id === "EMP04") {
+            aiRecommendedCourse = { name: "글로벌 다자간 비즈니스 협상 전문가 과정", effect: "자기계발(GRW) 스탯 +3 상승" };
+        } else if (player.id === "EMP05") {
+            aiRecommendedCourse = { name: "비즈니스 기획서 및 마감 관리 실무 가이드", effect: "문제해결(PRF) 스탯 +5 상승" };
+        } else if (player.id === "EMP06") {
+            aiRecommendedCourse = { name: "인재 매칭 AI 시스템 구축과 전략적 HRM", effect: "협업능력(COP) 스탯 +4 상승" };
+        }
+
+        // 3. HTML 템플릿 생성
+        // 수료 완료 교육 목록 구성
+        let completedHTML = "";
+        if (completedCourses.length === 0) {
+            completedHTML = `<p style="font-size: 12px; color: var(--text-muted); padding: 5px 0;">수료한 교육이 없습니다.</p>`;
+        } else {
+            completedHTML = completedCourses.map(course => `
+                <div class="detail-history-item" style="padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="fa-solid fa-circle-check" style="color: var(--success); font-size: 14px;"></i>
+                        <span style="font-size: 12.5px; font-weight: bold; color: #fff;">${course.name}</span>
+                    </div>
+                    <span style="font-size: 11px; color: var(--text-muted);">${course.info} 수료</span>
+                </div>
+            `).join('');
+        }
+
+        // 진행 중인 교육 목록 구성
+        let inProgressHTML = "";
+        if (inProgressCourses.length === 0) {
+            inProgressHTML = `<p style="font-size: 12px; color: var(--text-muted); padding: 5px 0;">현재 진행 중인 교육이 없습니다.</p>`;
+        } else {
+            inProgressHTML = inProgressCourses.map(course => {
+                const percent = typeof course.info === 'number' ? course.info : 50;
+                return `
+                    <div class="detail-history-item" style="padding: 12px; margin-bottom: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fa-solid fa-spinner fa-spin" style="color: var(--primary-neon); font-size: 14px;"></i>
+                                <span style="font-size: 12.5px; font-weight: bold; color: #fff;">${course.name}</span>
+                            </div>
+                            <span style="font-size: 11px; color: var(--primary-neon); font-weight: bold;">진행률 ${percent}%</span>
+                        </div>
+                        <div class="progress-bar-bg" style="height: 6px; margin: 0; border-radius: 3px;">
+                            <div class="progress-bar-fill info" style="width: ${percent}%; height: 100%; border-radius: 3px;"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        return `
+            <div style="padding: 15px; display: flex; flex-direction: column; gap: 20px;">
+                
+                <!-- 1. 수료 완료 교육 목록 -->
+                <div class="db-widget glass-panel" style="padding: 15px;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: var(--gold-main); font-weight: bold;">
+                        <i class="fa-solid fa-graduation-cap"></i> 수료 완료 교육 이력 (Completed Courses)
+                    </h4>
+                    ${completedHTML}
+                </div>
+
+                <!-- 2. 진행 중인 교육 목록 -->
+                <div class="db-widget glass-panel" style="padding: 15px;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: var(--primary-neon); font-weight: bold;">
+                        <i class="fa-solid fa-bars-progress"></i> 현재 수강 중인 교육 (In Progress)
+                    </h4>
+                    ${inProgressHTML}
+                </div>
+
+                <!-- 3. AI 맞춤 커리어 추천 교육 -->
+                <div class="db-widget glass-panel" style="background: rgba(255, 255, 255, 0.01); border-left: 3px solid var(--gold-main); padding: 15px;">
+                    <h4 style="margin: 0 0 8px 0; font-size: 13px; color: var(--gold-main); font-weight: bold;">
+                        <i class="fa-solid fa-robot"></i> AI 직무 맞춤 추천 교육
+                    </h4>
+                    <p style="margin: 0; font-size: 12.5px; line-height: 1.6; color: var(--text-main); font-weight: bold;">
+                        💡 ${aiRecommendedCourse.name}
+                    </p>
+                    <p style="margin: 4px 0 0 0; font-size: 11px; color: var(--text-muted);">
+                        예상 개발 효과: ${aiRecommendedCourse.effect}
+                    </p>
+                </div>
+            </div>
+        `;
     }
 
     // 4. 업무·컨디션 탭 렌더링
+    // 각 직원의 실시간 업무 부하량(workload) 수치와 연동하여 번아웃 위험도, 스트레스 지수 바,
+    // 진행 프로젝트 정보 및 AI의 세부 진단 피드백을 수려한 글래스모피즘 레이아웃으로 출력합니다.
     function renderConditionTab(player) {
-        return `<div style="padding: 10px;"><h4 style="color:var(--danger);">실시간 업무 부하량</h4></div>`;
+        // 플레이어별 실시간 부하량 값 추출 (기본값 75%)
+        const wl = player.workload !== undefined ? player.workload : 75;
+        
+        let riskLevel = "Low";
+        let riskColor = "var(--success)";
+        let riskText = "안정 (Low)";
+        let projectCount = 2;
+        let urgentTaskCount = 0;
+        let stressPercent = Math.min(wl, 100); // 부하량을 바탕으로 스트레스 지수(최대 100%) 매핑
+        
+        let adviceMessage = "";
+        let alarmIcon = "";
+
+        // 업무 부하량에 따른 등급 진단
+        if (wl >= 110) {
+            riskLevel = "High";
+            riskColor = "var(--danger)";
+            riskText = "⚠️ 과부하 (High)";
+            projectCount = 4;
+            urgentTaskCount = 3;
+            adviceMessage = "현재 다수의 핵심 프로젝트와 마감 업무가 동시에 겹쳐 심각한 번아웃 위험 상태입니다. 즉시 리소스 재조정(업무 위임 또는 일정 연기)이 권장됩니다.";
+            alarmIcon = `<i class="fa-solid fa-triangle-exclamation pulse-anim" style="color: var(--danger); font-size: 16px;"></i>`;
+        } else if (wl >= 80) {
+            riskLevel = "Moderate";
+            riskColor = "#ffaa00"; // 주의/보통
+            riskText = "⚠️ 주의 (Moderate)";
+            projectCount = 3;
+            urgentTaskCount = 1;
+            adviceMessage = "업무량이 다소 높은 상태를 유지하고 있습니다. 단기 마감 업무 수행에는 문제가 없으나, 추가적인 신규 프로젝트 배정은 가급적 지양해 주십시오.";
+            alarmIcon = `<i class="fa-solid fa-circle-exclamation" style="color: #ffaa00; font-size: 16px;"></i>`;
+        } else {
+            riskLevel = "Low";
+            riskColor = "var(--success)";
+            riskText = "✅ 안정 (Low)";
+            projectCount = 2;
+            urgentTaskCount = 0;
+            adviceMessage = "현재 업무 배정량이 적절하며 쾌적한 컨디션을 유지하고 있습니다. 새로운 프로젝트 배치 및 주도적 작업 수행을 소화할 수 있는 충분한 여력이 있습니다.";
+            alarmIcon = `<i class="fa-solid fa-circle-check" style="color: var(--success); font-size: 16px;"></i>`;
+        }
+
+        return `
+            <div style="padding: 15px; display: flex; flex-direction: column; gap: 20px;">
+                <!-- 1. 부하량 & 번아웃 위험도 헤더 카드 -->
+                <div class="db-widget glass-panel" style="border-left: 4px solid ${riskColor}; padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h4 style="margin: 0; color: #fff; font-size: 15px; font-weight: bold;">
+                            ${alarmIcon} 실시간 업무 부하량 & 번아웃 진단
+                        </h4>
+                        <span style="color: ${riskColor}; font-weight: 800; font-size: 15px;">
+                            ${riskText}
+                        </span>
+                    </div>
+                    
+                    <!-- 게이지바 레이아웃 -->
+                    <div class="workload-gauge" style="margin-top: 10px; height: 16px; border-radius: 8px;">
+                        <div class="workload-fill" style="width: ${Math.min(wl, 100)}%; background: ${riskColor}; height: 100%; border-radius: 8px;"></div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-top: 8px; color: var(--text-muted);">
+                        <span>안정 범위 (0% ~ 80%)</span>
+                        <span style="color: ${riskColor}; font-weight: bold; font-size: 14px;">${wl}%</span>
+                    </div>
+                </div>
+
+                <!-- 2. 스트레스 지수 및 리소스 세부 분배 현황 -->
+                <div class="form-grid-2col" style="gap: 20px;">
+                    <!-- 스트레스 지수 시각화 -->
+                    <div class="db-widget glass-panel" style="padding: 15px;">
+                        <h4 style="margin: 0 0 10px 0; font-size: 13px; color: var(--text-muted);">
+                            <i class="fa-solid fa-face-meh" style="color: var(--gold-main);"></i> 스트레스 레벨 인디케이터
+                        </h4>
+                        <div class="stress-meter" style="margin: 20px 0 10px 0; height: 16px; border-radius: 8px;">
+                            <div class="stress-pointer" style="left: ${stressPercent}%;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted);">
+                            <span>쾌적</span>
+                            <span>보통</span>
+                            <span>피로</span>
+                        </div>
+                    </div>
+
+                    <!-- 프로젝트 및 테스크 현황 -->
+                    <div class="db-widget glass-panel" style="padding: 15px;">
+                        <h4 style="margin: 0 0 10px 0; font-size: 13px; color: var(--text-muted);">
+                            <i class="fa-solid fa-folder-tree" style="color: var(--primary-neon);"></i> 리소스 배정 현황
+                        </h4>
+                        <div style="display: flex; justify-content: space-around; align-items: center; height: 100%;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 20px; font-weight: bold; color: var(--primary-neon);">${projectCount}건</div>
+                                <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">진행 프로젝트</div>
+                            </div>
+                            <div style="width: 1px; height: 35px; background: rgba(255,255,255,0.1);"></div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 20px; font-weight: bold; color: ${urgentTaskCount > 0 ? 'var(--danger)' : 'var(--text-main)'};">${urgentTaskCount}건</div>
+                                <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">마감 임박 업무</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. AI 처방전 & 권장 조치 가이드 -->
+                <div class="db-widget glass-panel" style="background: rgba(255, 255, 255, 0.01); border-left: 3px solid var(--gold-main); padding: 15px;">
+                    <h4 style="margin: 0 0 8px 0; font-size: 13px; color: var(--gold-main); font-weight: bold;">
+                        <i class="fa-solid fa-robot"></i> AI 리소스 관리 제언
+                    </h4>
+                    <p style="margin: 0; font-size: 12.5px; line-height: 1.6; color: var(--text-main);">
+                        "${adviceMessage}"
+                    </p>
+                </div>
+            </div>
+        `;
     }
 
     // 5. 평가·피드백 탭 렌더링
@@ -1126,10 +1426,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 프로젝트 배치 제안 모달 렌더링 ---
+    // 기존의 고정되어 있던 'Normal (안정적)' 문구를 대상 직원의 실제 workload(실시간 업무 부하량)에 따라
+    // 위험 등급 및 색상, 부하량 수치와 함께 동적으로 연동되도록 리팩토링합니다.
     function openTransferProposal(player) {
         const modal = document.getElementById('transfer-proposal-modal');
         const content = document.getElementById('transfer-proposal-content');
         if(!modal || !content) return;
+
+        // 플레이어별 실시간 부하량 값 추출 (기본값 75%)
+        const wl = player.workload !== undefined ? player.workload : 75;
+        let loadText = "Low (안정적)";
+        let loadColor = "var(--success)";
+
+        if (wl >= 110) {
+            loadText = `High (과부하)`;
+            loadColor = "var(--danger)";
+        } else if (wl >= 80) {
+            loadText = `Moderate (주의)`;
+            loadColor = "#ffaa00";
+        }
 
         content.innerHTML = `
             <div style="padding: 20px;">
@@ -1148,7 +1463,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div style="width: 1px; height: 40px; background: rgba(255,255,255,0.1);"></div>
                         <div>
                             <div style="font-size: 11px; color: var(--text-muted);">현재 업무 부담</div>
-                            <div style="font-size: 14px; font-weight: bold;">Normal (안정적)</div>
+                            <div style="font-size: 14px; font-weight: bold; color: ${loadColor};">${loadText} (${wl}%)</div>
                         </div>
                     </div>
                 </div>
@@ -1201,6 +1516,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    /**
+     * [신규] 현재 모드(currentMode)에 따라 교육훈련 UI(GNB 훈련 버튼, 사이드바 트레이닝 존 메뉴)의
+     * 노출 여부를 동적으로 제어합니다. 개인 모드('personal')일 때는 보이지 않게 처리하고,
+     * 그 외의 모드(team, hr, admin)일 때는 display: flex 형태로 원복시킵니다.
+     */
+    function updateTrainingUIVisibility() {
+        const gnbTrainingEl = document.getElementById('gnb-training');
+        const navTrainingEl = document.getElementById('nav-training');
+        
+        if (currentMode === 'personal') {
+            if (gnbTrainingEl) gnbTrainingEl.style.display = 'none';
+            if (navTrainingEl) navTrainingEl.style.display = 'none';
+        } else {
+            // styles.css에 정의된 원래 스타일 display: flex로 복원합니다.
+            if (gnbTrainingEl) gnbTrainingEl.style.display = 'flex';
+            if (navTrainingEl) navTrainingEl.style.display = 'flex';
+        }
+    }
+
     // --- Mode Toggle Functionality ---
     const modeBtns = document.querySelectorAll('.mode-btn');
     modeBtns.forEach(btn => {
@@ -1208,6 +1542,9 @@ document.addEventListener('DOMContentLoaded', () => {
             modeBtns.forEach(b => b.classList.remove('active'));
             e.target.classList.add('active');
             currentMode = e.target.getAttribute('data-mode');
+
+            // [신규] 모드 변경 시 교육훈련 UI 노출 상태를 실시간 제어합니다.
+            updateTrainingUIVisibility();
 
             // 모든 뷰 숨김 및 투명도 0 (TOTW 섹션 포함)
             const sections = [adminDashboardSection, hrDashboardSection, teamDashboardSection, personalDashboardSection, totwSection];
@@ -1723,9 +2060,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 문서 로드 시 개인 모드 서브 탭 초기화 및 보상 시스템 이벤트 초기화 실행
-    initPersonalTabs();
-    setupRewardExchangeEvents();
+    // (문서 로드 초기화 실행은 하단 선언부 밑에서 안전하게 호출되도록 순서가 이동되었습니다.)
 
     // ==========================================
     // --- Notification Modal Logic ---
@@ -1735,6 +2070,194 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeNotifyBtn = document.getElementById('close-notification');
     const notifyBadge = document.getElementById('notify-badge');
 
+    // --- [신규] 알림 센터 동적 렌더링 데이터 정의 ---
+    const systemNotifications = [
+        {
+            id: "notify-1",
+            type: "danger",
+            icon: "fa-triangle-exclamation",
+            borderColor: "var(--danger)",
+            iconColor: "var(--danger)",
+            title: "[업무 과부하 경고]",
+            message: "김영은 직원의 업무 부담도가 팀 평균 대비 135%입니다. 즉각적인 업무 재배분 검토가 필요합니다.",
+            buttonText: "검토하기",
+            buttonClass: "btn-primary",
+            buttonStyle: "padding: 4px 10px; font-size: 11px;",
+            targetUserId: "EMP01", // 김영은 직원에 관한 알림
+            category: "system-warning"
+        },
+        {
+            id: "notify-2",
+            type: "danger",
+            icon: "fa-person-walking-arrow-right",
+            borderColor: "var(--danger)",
+            iconColor: "var(--danger)",
+            title: "[이직 위험 신호 감지]",
+            message: "핵심 인재 이명철 직원의 활동 패턴에서 이직 준비 신호가 감지되었습니다. 1:1 면담을 권장합니다.",
+            buttonText: "면담 예약",
+            buttonClass: "btn-primary",
+            buttonStyle: "padding: 4px 10px; font-size: 11px;",
+            targetUserId: "EMP03", // 이명철 직원에 관한 알림
+            category: "system-warning"
+        },
+        {
+            id: "notify-3",
+            type: "primary",
+            icon: "fa-lightbulb",
+            borderColor: "var(--primary-neon)",
+            iconColor: "var(--primary-neon)",
+            title: "[교육훈련 추천]",
+            message: "김건우 직원의 부족 역량 보완을 위해 '데이터 분석 입문' 과정을 추천합니다.",
+            buttonText: "과정 보기",
+            buttonClass: "btn-secondary",
+            buttonStyle: "padding: 4px 10px; font-size: 11px; background: rgba(0,243,255,0.1); border-color: var(--primary-neon); color: var(--primary-neon); border-style: solid; border-width: 1px;",
+            targetUserId: "EMP04", // 김건우 본인 타겟
+            category: "recommendation"
+        },
+        {
+            id: "notify-4",
+            type: "gold",
+            icon: "fa-coins",
+            borderColor: "var(--gold-main)",
+            iconColor: "var(--gold-main)",
+            title: "[보상 포인트 지급 완료]",
+            message: "'글로벌 시장 런칭' 프로젝트 성공 보너스 2,000 GP가 지급되었습니다.",
+            buttonText: "내역 확인",
+            buttonClass: "btn-secondary",
+            buttonStyle: "padding: 4px 10px; font-size: 11px; background: rgba(212,175,55,0.1); border-color: var(--gold-main); color: var(--gold-main); border-style: solid; border-width: 1px;",
+            targetUserId: "EMP01", // 김영은 본인 타겟
+            category: "reward"
+        },
+        {
+            id: "notify-5",
+            type: "primary",
+            icon: "fa-lightbulb",
+            borderColor: "var(--primary-neon)",
+            iconColor: "var(--primary-neon)",
+            title: "[교육훈련 추천]",
+            message: "이명철 직원의 부족 역량 보완을 위해 '고급 리더십 세미나' 과정을 추천합니다.",
+            buttonText: "과정 보기",
+            buttonClass: "btn-secondary",
+            buttonStyle: "padding: 4px 10px; font-size: 11px; background: rgba(0,243,255,0.1); border-color: var(--primary-neon); color: var(--primary-neon); border-style: solid; border-width: 1px;",
+            targetUserId: "EMP03", // 이명철 본인 타겟
+            category: "recommendation"
+        },
+        {
+            id: "notify-6",
+            type: "gold",
+            icon: "fa-coins",
+            borderColor: "var(--gold-main)",
+            iconColor: "var(--gold-main)",
+            title: "[보상 포인트 지급 완료]",
+            message: "'신규 마케팅 요건 분석' 공헌 보너스 500 GP가 지급되었습니다.",
+            buttonText: "내역 확인",
+            buttonClass: "btn-secondary",
+            buttonStyle: "padding: 4px 10px; font-size: 11px; background: rgba(212,175,55,0.1); border-color: var(--gold-main); color: var(--gold-main); border-style: solid; border-width: 1px;",
+            targetUserId: "EMP03", // 이명철 본인 타겟
+            category: "reward"
+        },
+        {
+            id: "notify-7",
+            type: "primary",
+            icon: "fa-lightbulb",
+            borderColor: "var(--primary-neon)",
+            iconColor: "var(--primary-neon)",
+            title: "[교육훈련 추천]",
+            message: "오주영 직원의 부족 역량 보완을 위해 '애자일 스크럼 마스터 실무' 과정을 추천합니다.",
+            buttonText: "과정 보기",
+            buttonClass: "btn-secondary",
+            buttonStyle: "padding: 4px 10px; font-size: 11px; background: rgba(0,243,255,0.1); border-color: var(--primary-neon); color: var(--primary-neon); border-style: solid; border-width: 1px;",
+            targetUserId: "EMP02", // 오주영 본인 타겟
+            category: "recommendation"
+        },
+        {
+            id: "notify-8",
+            type: "gold",
+            icon: "fa-coins",
+            borderColor: "var(--gold-main)",
+            iconColor: "var(--gold-main)",
+            title: "[보상 포인트 지급 완료]",
+            message: "'자동화 파이프라인 구축' 성공 보너스 1,000 GP가 지급되었습니다.",
+            buttonText: "내역 확인",
+            buttonClass: "btn-secondary",
+            buttonStyle: "padding: 4px 10px; font-size: 11px; background: rgba(212,175,55,0.1); border-color: var(--gold-main); color: var(--gold-main); border-style: solid; border-width: 1px;",
+            targetUserId: "EMP02", // 오주영 본인 타겟
+            category: "reward"
+        },
+        {
+            id: "notify-9",
+            type: "gold",
+            icon: "fa-coins",
+            borderColor: "var(--gold-main)",
+            iconColor: "var(--gold-main)",
+            title: "[보상 포인트 지급 완료]",
+            message: "'인재 스카우팅 시스템 도입' 공로 보너스 1,500 GP가 지급되었습니다.",
+            buttonText: "내역 확인",
+            buttonClass: "btn-secondary",
+            buttonStyle: "padding: 4px 10px; font-size: 11px; background: rgba(212,175,55,0.1); border-color: var(--gold-main); color: var(--gold-main); border-style: solid; border-width: 1px;",
+            targetUserId: "EMP06", // 황한솔 본인 타겟
+            category: "reward"
+        }
+    ];
+
+    /**
+     * [신규] 로그인한 사용자 권한에 따른 알림 센터 목록 동적 렌더링 함수
+     */
+    function renderNotifications() {
+        const container = document.getElementById('notification-list-container');
+        const badge = document.getElementById('notify-badge');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        // 로그인한 사용자 확인 (Guest 상태이면 임시 객체)
+        const user = currentUser || { id: 'GUEST', role: 'Guest' };
+        const isAdminOrHR = user.id === 'EMP01' || user.id === 'EMP06';
+
+        // 알림 데이터 필터링 조건 적용 (일반 사원은 타 직원의 민감 알림 차단)
+        const filtered = systemNotifications.filter(n => {
+            if (isAdminOrHR) {
+                // 관리자 및 HR은 민감한 시스템 warning 알림과 본인의 추천/보상 알림을 확인할 수 있습니다.
+                return n.category === 'system-warning' || n.targetUserId === user.id;
+            } else {
+                // 일반 사원은 타 직원의 경고나 민감 사항을 보지 못하고, 본인 앞으로 할당된 알림(추천, 보상 등)만 봅니다.
+                return n.targetUserId === user.id && n.category !== 'system-warning';
+            }
+        });
+
+        if (filtered.length === 0) {
+            container.innerHTML = `
+                <div style="color: var(--text-muted); text-align: center; padding: 30px 0; font-size: 13px; font-style: italic;">
+                    표시할 새로운 알림이 없습니다.
+                </div>
+            `;
+            if (badge) badge.style.display = 'none';
+            return;
+        }
+
+        // 필터링된 알림 데이터를 기반으로 동적 HTML 생성 및 주입
+        filtered.forEach(n => {
+            const html = `
+                <div class="notify-item glass-panel" style="border-left: 4px solid ${n.borderColor}; padding: 15px; margin-bottom: 5px;">
+                    <div style="display: flex; gap: 12px; align-items: flex-start;">
+                        <i class="fa-solid ${n.icon}" style="color: ${n.iconColor}; font-size: 18px; margin-top: 3px;"></i>
+                        <div style="flex: 1;">
+                            <strong style="display: block; font-size: 14px; margin-bottom: 4px;">${n.title}</strong>
+                            <p style="font-size: 12px; color: var(--text-main); margin-bottom: 8px; line-height: 1.4;">${n.message}</p>
+                            <button class="${n.buttonClass}" style="${n.buttonStyle}">${n.buttonText}</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+        });
+
+        // 1개 이상의 알림이 존재하면 GNB 아이콘 상단에 빨간색 알림 배지 활성화
+        if (badge) {
+            badge.style.display = 'block';
+        }
+    }
+
     if (btnNotify && notifyModal) {
         btnNotify.addEventListener('click', (e) => {
             e.preventDefault();
@@ -1743,6 +2266,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (notifyBadge) notifyBadge.style.display = 'none';
         });
     }
+
+    // [순서 교정] 모든 변수(systemNotifications)와 함수가 로딩된 후 안전하게 초기화를 수행합니다.
+    initPersonalTabs();
+    setupRewardExchangeEvents();
+    renderNotifications(); // 최초 로드 시 사용자 권한에 따른 알림 렌더링 실행
 
     if (closeNotifyBtn && notifyModal) {
         closeNotifyBtn.addEventListener('click', () => {
@@ -2300,6 +2828,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 loginOverlay.style.display = 'none';
             }, 500);
         }
+
+        // 6. 로그인한 사용자 권한에 기반한 알림 센터 데이터 즉각 업데이트
+        renderNotifications();
     }
 
     /**
@@ -2340,6 +2871,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnTalentMap = document.getElementById('gnb-talent-map');
         if (btnCreateProj) btnCreateProj.style.display = '';
         if (btnTalentMap) btnTalentMap.style.display = '';
+
+        // [신규] 교육훈련 UI(GNB 훈련 버튼, 사이드바 트레이닝 존 메뉴) 가시성 리셋 (원래 스타일인 'flex'로 복구)
+        const gnbTrainingEl = document.getElementById('gnb-training');
+        const navTrainingEl = document.getElementById('nav-training');
+        if (gnbTrainingEl) gnbTrainingEl.style.display = 'flex';
+        if (navTrainingEl) navTrainingEl.style.display = 'flex';
+
+        // 5. 알림 센터 리셋
+        renderNotifications();
     }
 
     // 4. 로그인 및 로그아웃 이벤트 리스너 바인딩
@@ -2354,11 +2894,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // 5명 기존 직원 + 1명 신규 황한솔이 합쳐진 전체 리스트에서 찾기
-            const matchedUser = players.find(p => p.name === username);
+            // [수정] 영문 ID(admin, hr), 사번(EMP01 등), 한글 이름 모두 매칭될 수 있도록 유연한 검색을 적용합니다.
+            const matchedUser = players.find(p => {
+                const searchKey = username.toLowerCase();
+                
+                // 1. 한글 이름 매치 (예: "김영은", "황한솔")
+                if (p.name === username) return true;
+                
+                // 2. 사원 번호 매치 (예: "EMP01" 또는 "emp01")
+                if (p.id.toLowerCase() === searchKey) return true;
+                
+                // 3. 특수 닉네임 매치 (예: "admin" -> 김영은 / "hr" -> 황한솔)
+                if (p.id === "EMP01" && searchKey === "admin") return true;
+                if (p.id === "EMP06" && searchKey === "hr") return true;
+                
+                return false;
+            });
 
             if (!matchedUser) {
-                alert(`⚠️ [미등록 사용자] '${username}'님은 등록되지 않은 직원입니다.\n(화면 하단의 직원 이름 힌트 배지를 클릭하면 쉽게 입력됩니다!)`);
+                alert(`⚠️ [미등록 사용자] 입력하신 '${username}' 정보에 매칭되는 직원이 없습니다.\n(한글 이름, 사번(emp01), admin/hr 중 하나를 입력해 주세요.)`);
                 return;
             }
 

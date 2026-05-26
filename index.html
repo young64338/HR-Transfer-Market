@@ -659,7 +659,8 @@
     <!-- Macro Talent Map Modal (전사 인재맵) -->
     <!-- ========================================== -->
     <div id="talent-map-modal" class="modal-overlay">
-        <div class="modal-content glass-panel" style="max-width: 1000px; max-height: 90vh; overflow-y: auto;">
+        <!-- [수정] 전사 인재맵의 세로 폭(max-height: 95vh)과 가로 폭을 늘리되, 화면 크기에 맞게 자동 축소되도록 width: 95% 및 max-width: 1250px를 동시 지정합니다. -->
+        <div class="modal-content glass-panel" style="width: 95%; max-width: 1250px; max-height: 95vh; overflow-y: auto;">
             <div class="modal-header">
                 <h2><i class="fa-solid fa-map" style="color: var(--primary-neon);"></i> 전사 인재맵 (Macro Talent Distribution Dashboard)</h2>
                 <button class="btn-close" id="close-talent-map"><i class="fa-solid fa-xmark"></i></button>
@@ -754,44 +755,26 @@
     <!-- Training Center Modal (교육훈련 관리 대시보드) -->
     <!-- ========================================== -->
     <div id="training-center-modal" class="modal-overlay">
-        <div class="modal-content glass-panel" style="max-width: 1000px; max-height: 90vh; overflow-y: auto;">
-            <div class="modal-header">
+        <!-- [수정] 교육훈련 모달 크기를 늘리되, 화면 크기에 맞게 자동 축소되어 가로 스크롤을 방지하도록 width: 95% 및 max-width: 1250px를 동시 지정합니다. -->
+        <div class="modal-content glass-panel" style="width: 95%; max-width: 1250px; max-height: 95vh; overflow-y: auto;">
+            <div class="modal-header" style="margin-bottom: 20px;">
                 <h2><i class="fa-solid fa-graduation-cap" style="color: var(--primary-neon);"></i> 교육훈련 관리 (Training & Development Center)</h2>
                 <button class="btn-close" id="close-training-center"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <div class="admin-welcome-msg" style="margin-bottom: 20px; border-left: 3px solid var(--success); background: rgba(255,255,255,0.05); padding: 15px;">
-                <p style="margin:0; font-size:13px;">📚 <strong>[성장 지원 플랫폼]</strong> 조직원의 부족한 역량을 진단하고 맞춤형 교육으로 성장을 돕습니다. 교육 수료 후 스탯이 영구적으로 상승합니다.</p>
+            <!-- [수정] 탭 화면 스케일에 어울리도록 마진을 25px로 조율하고, 실제 노출되는 위젯에 맞게 문맥 텍스트를 보완하였습니다. -->
+            <div class="admin-welcome-msg" style="margin-bottom: 25px; border-left: 3px solid var(--success); background: rgba(255,255,255,0.05); padding: 15px 20px;">
+                <p style="margin:0; font-size:13px; line-height:1.5;">📚 <strong>[성장 지원 플랫폼]</strong> 전사 교육 이수율 및 학습 시급성을 모니터링하고 체계적인 훈련 일정을 지원합니다. 교육 수료 후 스탯이 영구적으로 상승합니다.</p>
             </div>
 
             <!-- 3단 그리드 -->
+            <!-- [수정] 추가 요구사항에 따라 1번(직원별 부족 역량) 및 5번(평균 Stat Up) 카드를 마저 삭제하고,
+                 남은 4개의 카드가 2행 대칭을 이루도록 구성합니다.
+                 - 1행: 이달의 교육 수료율(1), 부서별 교육 시급성(1), 실무 적용률(1) -> 3열 꽉 채움.
+                 - 2행: 다음 달 전사 교육 일정(span 3) -> 전체 가로 폭을 와이드하게 차지하여 완성도 높은 대칭 정렬을 유지합니다. -->
             <div class="dashboard-grid" style="grid-template-columns: repeat(3, 1fr);">
-                
-                <!-- 1. 직원별 부족 역량 -->
-                <div class="db-widget glass-panel">
-                    <h4><i class="fa-solid fa-user-xmark"></i> 직원별 부족 역량 (Skill Gaps)</h4>
-                    <ul class="simple-list">
-                        <li><span>김건우 (글로벌사업지원팀)</span> <span class="tag-btn" style="font-size:10px; padding:2px 6px;">데이터 분석</span></li>
-                        <li><span>이정무 (영업관리팀)</span> <span class="tag-btn" style="font-size:10px; padding:2px 6px;">보고서 작성</span></li>
-                    </ul>
-                </div>
 
-                <!-- 2. AI 추천 교육 목록 -->
-                <div class="db-widget glass-panel">
-                    <h4><i class="fa-solid fa-robot"></i> AI 맞춤 추천 교육</h4>
-                    <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
-                        <div class="training-course-badge">
-                            <strong>[실무 AI] ChatGPT를 활용한 업무 자동화</strong>
-                            <span>수강 대상: 15명 (필수 3명)</span>
-                        </div>
-                        <div class="training-course-badge">
-                            <strong>[스킬업] 고급 데이터 시각화 과정</strong>
-                            <span>수강 대상: 8명</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 3. 교육 신청/수료 현황 -->
+                <!-- 3. 교육 신청/수료 현황 (1행 1열) -->
                 <div class="db-widget glass-panel">
                     <h4><i class="fa-solid fa-chart-line"></i> 이달의 교육 수료율</h4>
                     <div class="big-stat" style="color:var(--primary-neon); text-align:center; margin-top:5px;">68 <span style="font-size:16px;">%</span></div>
@@ -801,7 +784,7 @@
                     <p style="text-align:center; font-size:11px; margin-top:5px;">목표(80%) 대비 다소 부진</p>
                 </div>
 
-                <!-- 4. 부서별 교육 필요도 -->
+                <!-- 4. 부서별 교육 필요도 (1행 2열) -->
                 <div class="db-widget glass-panel">
                     <h4><i class="fa-solid fa-building-circle-exclamation"></i> 부서별 교육 시급성</h4>
                     <div class="heatmap-row" style="margin-top:10px;"><span>영업관리팀</span><div class="hm-bar pulse-anim" style="background:var(--danger); width:90%;"></div></div>
@@ -809,23 +792,7 @@
                     <div class="heatmap-row"><span>AI기획팀</span><div class="hm-bar" style="background:var(--success); width:30%;"></div></div>
                 </div>
 
-                <!-- 5. 교육 전후 능력치 변화 (Stat Up 시뮬레이터) -->
-                <div class="db-widget glass-panel" style="border: 1px solid var(--gold-main); background: rgba(212,175,55,0.05);">
-                    <h4><i class="fa-solid fa-arrow-up-right-dots" style="color:var(--gold-main);"></i> 평균 Stat Up (교육 전후)</h4>
-                    <div style="display:flex; justify-content:space-around; align-items:center; margin-top:15px;">
-                        <div style="text-align:center;">
-                            <div style="font-size:12px; color:var(--text-muted);">교육 전 GRW</div>
-                            <div style="font-size:24px; font-weight:bold;">82</div>
-                        </div>
-                        <i class="fa-solid fa-arrow-right stat-up-anim" style="color:var(--success); font-size:20px;"></i>
-                        <div style="text-align:center;">
-                            <div style="font-size:12px; color:var(--gold-main);">교육 수료 후 예상</div>
-                            <div style="font-size:24px; font-weight:bold; color:var(--success); text-shadow:0 0 10px rgba(0,255,153,0.5);">87</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 6. 교육 후 실무 적용률 -->
+                <!-- 6. 교육 후 실무 적용률 (1행 3열) -->
                 <div class="db-widget glass-panel" style="text-align:center;">
                     <h4><i class="fa-solid fa-briefcase"></i> 실무 적용률 (Application Rate)</h4>
                     <div class="gauge-chart-mock" style="margin: 15px auto;">
@@ -835,20 +802,14 @@
                     <p style="font-size:11px;">수강생의 72%가 실무에 즉시 활용 중</p>
                 </div>
 
-                <!-- 7. 다음 달 교육훈련 계획 -->
-                <div class="db-widget glass-panel">
+                <!-- 7. 다음 달 교육훈련 계획 (2행: 가로 3칸 전체를 와이드하게 확장 차지) -->
+                <div class="db-widget glass-panel" style="grid-column: span 3;">
                     <h4><i class="fa-solid fa-calendar-days"></i> 다음 달 전사 교육 일정</h4>
                     <ul class="simple-list" style="margin-top:10px;">
                         <li><span style="color:var(--primary-neon);">[11/05]</span> 전사 보안 윤리 교육</li>
                         <li><span style="color:var(--gold-main);">[11/12]</span> 차세대 리더십 부트캠프</li>
                         <li><span style="color:var(--success);">[11/20]</span> 프롬프트 엔지니어링 실습</li>
                     </ul>
-                </div>
-
-                <!-- 8. Quick Actions (기존 폼 호출) -->
-                <div class="db-widget glass-panel" style="display:flex; flex-direction:column; justify-content:center; gap:10px;">
-                    <button class="btn-primary" style="padding:12px;"><i class="fa-solid fa-plus"></i> 새 교육과정 개설</button>
-                    <button class="btn-secondary" id="btn-open-training-upload" style="padding:12px; background:rgba(0,243,255,0.1); border:1px solid var(--primary-neon); color:var(--primary-neon);"><i class="fa-solid fa-certificate"></i> 내 자격증/수료증 인증하기</button>
                 </div>
                 
             </div>
@@ -859,7 +820,8 @@
     <!-- Project Registration Form Modal (프로젝트 생성) -->
     <!-- ========================================== -->
     <div id="project-modal" class="modal-overlay">
-        <div class="modal-content glass-panel" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+        <!-- [수정] 프로젝트 생성 및 AI 매치메이킹 모달 크기를 늘리되, 화면 크기에 맞게 자동 축소되어 가로 스크롤을 방지하도록 width: 95% 및 max-height: 95vh를 동시 지정합니다. -->
+        <div class="modal-content glass-panel" style="width: 95%; max-width: 1250px; max-height: 95vh; overflow-y: auto;">
             <div class="modal-header">
                 <h2><i class="fa-solid fa-rocket" style="color: var(--primary-neon);"></i> 프로젝트 생성 및 AI 사내 스카우팅</h2>
                 <button class="btn-close" id="close-project"><i class="fa-solid fa-xmark"></i></button>
@@ -884,15 +846,14 @@
                         <label>기대 결과물</label>
                         <textarea class="styled-textarea" rows="2" placeholder="산출물 예시"></textarea>
                     </div>
-                    <div class="form-group" style="display: flex; gap: 10px;">
-                        <div style="flex:1;">
-                            <label>담당 부서</label>
-                            <select class="styled-select"><option>AI 융합기획팀</option><option>글로벌사업지원팀</option></select>
-                        </div>
-                        <div style="flex:1;">
-                            <label>지원 마감일</label>
-                            <input type="date" class="styled-input">
-                        </div>
+                    <!-- [수정] 담당 부서와 지원 마감일을 한 행에 묶지 않고 각각의 독립 행으로 분리하여 여백을 확보합니다. -->
+                    <div class="form-group">
+                        <label>담당 부서</label>
+                        <select class="styled-select"><option>AI 융합기획팀</option><option>글로벌사업지원팀</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label>지원 마감일</label>
+                        <input type="date" class="styled-input">
                     </div>
                     <div class="form-group">
                         <label>프로젝트 기간</label>
@@ -908,15 +869,14 @@
                         <label>모집 인원</label>
                         <input type="number" class="styled-input" min="1" max="10" value="3">
                     </div>
-                    <div class="form-group" style="display: flex; gap: 10px;">
-                        <div style="flex:1;">
-                            <label>업무 난이도</label>
-                            <select class="styled-select"><option>Low</option><option>Medium</option><option>High</option></select>
-                        </div>
-                        <div style="flex:1;">
-                            <label>예상 업무 부담도</label>
-                            <select class="styled-select"><option>보통 (야근 없음)</option><option>다소 높음 (주 5시간↑)</option></select>
-                        </div>
+                    <!-- [수정] 업무 난이도와 예상 업무 부담도를 개별 행으로 분리하여, 글자 및 긴 옵션 텍스트가 줄바꿈 없이 한 줄에 모두 드러나게 합니다. -->
+                    <div class="form-group">
+                        <label>업무 난이도</label>
+                        <select class="styled-select"><option>Low</option><option>Medium</option><option>High</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label>예상 업무 부담도</label>
+                        <select class="styled-select"><option>보통 (야근 없음)</option><option>다소 높음 (주 5시간↑)</option></select>
                     </div>
                     <div class="form-group">
                         <label>필요 직무 경험</label>
@@ -1082,53 +1042,7 @@
             </div>
             
             <div class="notification-list" id="notification-list-container" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-                <!-- 위험 알림 -->
-                <div class="notify-item glass-panel" style="border-left: 4px solid var(--danger); padding: 15px; margin-bottom: 5px;">
-                    <div style="display: flex; gap: 12px; align-items: flex-start;">
-                        <i class="fa-solid fa-triangle-exclamation" style="color: var(--danger); font-size: 18px; margin-top: 3px;"></i>
-                        <div style="flex: 1;">
-                            <strong style="display: block; font-size: 14px; margin-bottom: 4px;">[업무 과부하 경고]</strong>
-                            <p style="font-size: 12px; color: var(--text-main); margin-bottom: 8px; line-height: 1.4;">김영은 직원의 업무 부담도가 팀 평균 대비 135%입니다. 즉각적인 업무 재배분 검토가 필요합니다.</p>
-                            <button class="btn-primary" style="padding: 4px 10px; font-size: 11px;">검토하기</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 이직 위험 알림 -->
-                <div class="notify-item glass-panel" style="border-left: 4px solid var(--danger); padding: 15px; margin-bottom: 5px;">
-                    <div style="display: flex; gap: 12px; align-items: flex-start;">
-                        <i class="fa-solid fa-person-walking-arrow-right" style="color: var(--danger); font-size: 18px; margin-top: 3px;"></i>
-                        <div style="flex: 1;">
-                            <strong style="display: block; font-size: 14px; margin-bottom: 4px;">[이직 위험 신호 감지]</strong>
-                            <p style="font-size: 12px; color: var(--text-main); margin-bottom: 8px; line-height: 1.4;">핵심 인재 이명철 직원의 활동 패턴에서 이직 준비 신호가 감지되었습니다. 1:1 면담을 권장합니다.</p>
-                            <button class="btn-primary" style="padding: 4px 10px; font-size: 11px;">면담 예약</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 추천 알림 -->
-                <div class="notify-item glass-panel" style="border-left: 4px solid var(--primary-neon); padding: 15px; margin-bottom: 5px;">
-                    <div style="display: flex; gap: 12px; align-items: flex-start;">
-                        <i class="fa-solid fa-lightbulb" style="color: var(--primary-neon); font-size: 18px; margin-top: 3px;"></i>
-                        <div style="flex: 1;">
-                            <strong style="display: block; font-size: 14px; margin-bottom: 4px;">[교육훈련 추천]</strong>
-                            <p style="font-size: 12px; color: var(--text-main); margin-bottom: 8px; line-height: 1.4;">김건우 직원의 부족 역량 보완을 위해 '데이터 분석 입문' 과정을 추천합니다.</p>
-                            <button class="btn-secondary" style="padding: 4px 10px; font-size: 11px; background: rgba(0,243,255,0.1); border-color: var(--primary-neon); color: var(--primary-neon); border-style: solid; border-width: 1px;">과정 보기</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 보상 알림 -->
-                <div class="notify-item glass-panel" style="border-left: 4px solid var(--gold-main); padding: 15px; margin-bottom: 5px;">
-                    <div style="display: flex; gap: 12px; align-items: flex-start;">
-                        <i class="fa-solid fa-coins" style="color: var(--gold-main); font-size: 18px; margin-top: 3px;"></i>
-                        <div style="flex: 1;">
-                            <strong style="display: block; font-size: 14px; margin-bottom: 4px;">[보상 포인트 지급 완료]</strong>
-                            <p style="font-size: 12px; color: var(--text-main); margin-bottom: 8px; line-height: 1.4;">'글로벌 시장 런칭' 프로젝트 성공 보너스 2,000 GP가 지급되었습니다.</p>
-                            <button class="btn-secondary" style="padding: 4px 10px; font-size: 11px; background: rgba(212,175,55,0.1); border-color: var(--gold-main); color: var(--gold-main); border-style: solid; border-width: 1px;">내역 확인</button>
-                        </div>
-                    </div>
-                </div>
+                <!-- JS(app.js - renderNotifications)에서 로그인 사용자 권한별로 안전하게 필터링되어 동적으로 주입됩니다. -->
             </div>
         </div>
     </div>
@@ -1137,7 +1051,8 @@
     <!-- Player Detailed Profile Modal (인재 상세 정보) -->
     <!-- ========================================== -->
     <div id="player-detail-modal" class="modal-overlay">
-        <div class="modal-content glass-panel" style="max-width: 850px; max-height: 90vh; overflow-y: auto;">
+        <!-- [수정] 상세 프로필 모달 크기를 늘리되, 화면 크기에 맞게 자동 축소되어 가로 스크롤을 방지하도록 width: 95% 및 max-width: 1200px를 동시 지정합니다. -->
+        <div class="modal-content glass-panel" style="width: 95%; max-width: 1200px; max-height: 95vh; overflow-y: auto;">
             <div class="modal-header">
                 <h2><i class="fa-solid fa-id-card" style="color: var(--gold-main);"></i> 인재 상세 프로필 (Detailed Profile)</h2>
                 <button class="btn-close" id="close-player-detail"><i class="fa-solid fa-xmark"></i></button>

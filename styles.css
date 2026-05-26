@@ -1095,13 +1095,16 @@ body {
     justify-content: center;
 }
 
+/* [수정] 대시보드 위젯 카드의 헤더(h4) 제목이 가로 공간 부족으로 줄바꿈되는 것을 방지합니다 */
 .db-widget h4 {
-    font-size: 14px;
+    font-size: 13.5px; /* 헤더 폰트 크기를 살짝 콤팩트하게 다듬어 줍니다 */
     color: var(--text-muted);
     margin-bottom: 12px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px; /* 아이콘과 텍스트 사이 여백을 6px로 최적화 */
+    white-space: nowrap; /* 제목의 줄바꿈(Wrap)을 금지하여 한 줄로 강제 출력 */
+    flex-wrap: nowrap; /* 아이콘과 제목이 개별 행으로 떨어지지 않도록 설정 */
 }
 
 .db-widget h4 i {
@@ -1841,18 +1844,20 @@ body.privacy-active .admin-welcome-msg p {
 }
 
 /* === Detail Modal Tabs === */
+/* [수정] 모달이 넓어졌으므로 상단 탭에 가로 스크롤바가 필요 없게 되었습니다.
+   스크롤 및 드래그 동작을 없애고 탭이 자연스럽게 고정되도록 조정합니다. */
 .detail-tabs {
     display: flex;
     gap: 15px;
     margin-bottom: 30px;
     border-bottom: 1px solid rgba(255,255,255,0.1);
-    padding-bottom: 6px; /* 스크롤바와 활성 탭 언더라인이 겹치지 않게 여유를 줍니다. */
-    overflow-x: auto;
-    overflow-y: hidden;  /* 세로 방향 스크롤은 제한합니다. */
+    padding-bottom: 6px;
+    overflow-x: hidden; /* 가로 스크롤바가 나오지 않도록 숨김 처리 */
+    overflow-y: hidden; /* 세로 스크롤 또한 잠금 */
     flex-wrap: nowrap;
-    scrollbar-width: thin; /* Firefox에서 얇은 스크롤바가 나타나게 설정합니다. */
-    cursor: grab;          /* 기본 마우스 커서를 움켜쥘 수 있는 손 모양으로 지정합니다. */
-    user-select: none;     /* 드래그 도중 텍스트 블록이 잡히지 않도록 막아줍니다. */
+    scrollbar-width: none; /* Firefox 등에서 스크롤바 노출을 완전 차단 */
+    cursor: default;       /* 드래그 스크롤용 grab 커서를 기본 화살표 커서로 복구 */
+    user-select: none;
 }
 
 .detail-tabs.active-drag {
@@ -2207,7 +2212,7 @@ body.privacy-active .admin-welcome-msg p {
 /* ── 피치 영역 ── */
 .squad-pitch-area {
     position: relative;
-    min-height: 360px;
+    min-height: 480px; /* [2차 수정] 기존 420px에서 480px로 추가 확장하여 여유 높이 확보 */
     border-radius: 16px;
     overflow: hidden;
     background:
@@ -2244,7 +2249,7 @@ body.privacy-active .admin-welcome-msg p {
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
     gap: 15px;
-    height: 290px;
+    height: 390px; /* [2차 수정] 기존 340px에서 390px로 추가 확장하여 행간 세로폭 120px 보장 */
 }
 
 .pitch-slot {
@@ -2257,7 +2262,7 @@ body.privacy-active .admin-welcome-msg p {
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
-    padding: 10px 8px;
+    padding: 6px 8px; /* [2차 수정] 기존 10px에서 6px로 패딩을 다이어트하여 세로 높이 확보 */
     text-align: center;
 }
 
@@ -2286,7 +2291,7 @@ body.privacy-active .admin-welcome-msg p {
     letter-spacing: 1px;
     color: rgba(255,255,255,0.35);
     text-transform: uppercase;
-    margin-bottom: 5px;
+    margin-bottom: 2px; /* [2차 수정] 기존 5px에서 2px로 하단 여백 다이어트 */
 }
 
 .pitch-slot.filled .slot-role { color: var(--gold-main); }
@@ -2295,7 +2300,7 @@ body.privacy-active .admin-welcome-msg p {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
+    gap: 2px; /* [2차 수정] 기존 3px에서 2px로 내부 줄간격 다이어트 */
 }
 
 .slot-player-img {

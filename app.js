@@ -17,7 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
             matchRating: "9.2",
             highlight: "AI 융합 응용력 우수, 트렌드 리더",
             status: "TOTW",
-            imgUrl: "https://i.pravatar.cc/150?img=47",
+            // [수정] 직접 제작하여 등록해 주신 로컬 이미지 경로(images/youngeun.jpg)로 변경합니다.
+            imgUrl: "images/youngeun.jpg",
             workload: 135, // 실시간 업무 부하량: 135% (업무 과부하 알림 연동 대상)
             trainingHistory: [
                 { name: "AI 융합 응용 기획 마스터", status: "Completed", info: "2026.02" },
@@ -39,7 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
             matchRating: "8.5",
             highlight: "유연한 업무 대처, 결제 프로세스 우수",
             status: "Normal",
-            imgUrl: "https://i.pravatar.cc/150?img=11",
+            // [수정] 직접 제작하여 등록해 주신 로컬 이미지 경로(images/juyoung.jpg)로 변경합니다.
+            imgUrl: "images/juyoung.jpg",
             workload: 95, // 실시간 업무 부하량: 95% (보통 수준)
             trainingHistory: [
                 { name: "세무회계 마스터 가이드", status: "Completed", info: "2025.12" },
@@ -61,7 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
             matchRating: "8.1",
             highlight: "창의적 기획, 커뮤니케이션 우수",
             status: "Normal",
-            imgUrl: "https://i.pravatar.cc/150?img=5",
+            // [수정] 직접 제작하여 등록해 주신 로컬 이미지 경로(images/myungchul.jpg)로 변경합니다.
+            imgUrl: "images/myungchul.jpg",
             workload: 80, // 실시간 업무 부하량: 80% (보통 수준)
             trainingHistory: [
                 { name: "브랜드 포지셔닝 전략", status: "Completed", info: "2025.10" },
@@ -83,7 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
             matchRating: "7.8",
             highlight: "어학 스탯 우수 (OPIc, TOEIC, G-TELP)",
             status: "Normal",
-            imgUrl: "https://i.pravatar.cc/150?img=60",
+            // [수정] 직접 제작하여 등록해 주신 로컬 이미지 경로(images/geonwoo.jpg)로 변경합니다.
+            imgUrl: "images/geonwoo.jpg",
             workload: 60, // 실시간 업무 부하량: 60% (쾌적 수준)
             trainingHistory: [
                 { name: "비즈니스 영어 회화 실무", status: "Completed", info: "2025.09" },
@@ -105,7 +109,8 @@ document.addEventListener('DOMContentLoaded', () => {
             matchRating: "5.2",
             highlight: "잦은 마감 지연, 소통 오류 (집중 관리 필요)",
             status: "Transfer List",
-            imgUrl: "https://i.pravatar.cc/150?img=33",
+            // [수정] 직접 제작하여 등록해 주신 로컬 이미지 경로(images/jungmoo.jpg)로 변경합니다.
+            imgUrl: "images/jungmoo.jpg",
             workload: 110, // 실시간 업무 부하량: 110% (다소 높음 / 집중 관리 대상)
             trainingHistory: [
                 { name: "오피스 실무 기초 (엑셀, PPT)", status: "Completed", info: "2025.08" },
@@ -126,7 +131,8 @@ document.addEventListener('DOMContentLoaded', () => {
             matchRating: "8.8",
             highlight: "우수한 소통 및 리더십, HR 평가 기획 우수",
             status: "Normal",
-            imgUrl: "https://i.pravatar.cc/150?img=12",
+            // [수정] 직접 제작하여 등록해 주신 로컬 이미지 경로(images/hansol.jpg)로 변경합니다.
+            imgUrl: "images/hansol.jpg",
             workload: 70, // 실시간 업무 부하량: 70% (쾌적 수준)
             trainingHistory: [
                 { name: "전략적 인적자원관리(HRM)", status: "Completed", info: "2025.11" },
@@ -2759,8 +2765,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (sidebarName) sidebarName.textContent = user.name;
         if (sidebarRole) sidebarRole.textContent = user.role;
         if (sidebarAvatar) {
-            // 아바타 원형 위젯에 표시될 이니셜 문자열 바인딩
-            sidebarAvatar.textContent = user.name.slice(0, 3);
+            // [수정] 아바타 원형 위젯에 이니셜 텍스트 대신 로그인한 사람의 프로필 이미지를 렌더링합니다.
+            sidebarAvatar.innerHTML = `<img src="${user.imgUrl}" alt="${user.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+            // 노란 배경색을 덮기 위해 배경색 속성을 제거합니다.
+            sidebarAvatar.style.background = 'none';
         }
 
         // ⭐️ [신규] 일반 직원 스카우팅 보드 메뉴 및 GNB 관련 버튼(프로젝트 생성, 인재맵) 권한 통제
@@ -2853,7 +2861,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // 2. 사이드바 프로필 기본 게스트 상태로 리셋
         if (sidebarName) sidebarName.textContent = '로그인 전';
         if (sidebarRole) sidebarRole.textContent = 'Guest';
-        if (sidebarAvatar) sidebarAvatar.textContent = 'G';
+        if (sidebarAvatar) {
+            sidebarAvatar.textContent = 'G';
+            // [수정] 로그인 시 제거했던 배경색 스타일을 원래대로 복구시킵니다.
+            sidebarAvatar.style.background = '';
+        }
 
         // 3. 모든 모드 버튼들의 제한 해제 및 초기화
         const modeButtons = document.querySelectorAll('.mode-btn');

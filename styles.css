@@ -3197,5 +3197,86 @@ body.privacy-active .admin-welcome-msg p {
     color: var(--text-muted);
 }
 
+/* ========================================== */
+/* --- [신규] 익명 제출용 커스텀 토글 스위치 --- */
+/* ========================================== */
+.switch-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 38px;
+    height: 20px;
+}
+
+.switch-wrapper input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.switch-slider:before {
+    position: absolute;
+    content: "";
+    height: 12px;
+    width: 12px;
+    left: 3px;
+    bottom: 3px;
+    background-color: var(--text-muted);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 50%;
+}
+
+/* 체크 활성화 시 스타일 */
+.switch-wrapper input:checked + .switch-slider {
+    background-color: rgba(0, 240, 255, 0.2);
+    border-color: var(--primary-neon);
+    box-shadow: inset 0 0 5px rgba(0, 240, 255, 0.2);
+}
+
+.switch-wrapper input:checked + .switch-slider:before {
+    transform: translateX(18px);
+    background-color: var(--primary-neon);
+    box-shadow: 0 0 8px var(--primary-neon);
+}
+
+/* ========================================== */
+/* --- [신규] 모달창 내부 스크롤바 디자인 최적화 --- */
+/* ========================================== */
+.modal-content::-webkit-scrollbar,
+.modal-overlay .modal-content *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.modal-content::-webkit-scrollbar-track,
+.modal-overlay .modal-content *::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb,
+.modal-overlay .modal-content *::-webkit-scrollbar-thumb {
+    background: rgba(212, 175, 55, 0.35); /* 골드 반투명 색상으로 디자인 통합 */
+    border-radius: 10px;
+    border: 1px solid transparent;
+    background-clip: padding-box;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover,
+.modal-overlay .modal-content *::-webkit-scrollbar-thumb:hover {
+    background: var(--gold-main); /* 호버 시 찬란한 골드로 강조 */
+    box-shadow: 0 0 8px var(--gold-main);
+}
+
+
 
 

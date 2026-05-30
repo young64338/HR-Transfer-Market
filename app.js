@@ -158,35 +158,242 @@ document.addEventListener('DOMContentLoaded', () => {
     const totwSection = document.getElementById('totw-section'); // [신규] TOTW (이주의 팀) 섹션 엘리먼트 정의
     
     let currentMode = 'team'; // default
-    let compareList = []; // 인재 비교 리스트 (최대 4명)
+    let compareList = []; // 인재 비교 리스트 (최대 6명)
 
-    // --- [Phase 7] 자율 태스크 데이터 정의 ---
-    let userTasks = [
-        {
-            id: "task-1",
-            name: "A프로젝트 요건 정의서 작성",
-            priority: "High",
-            estTime: "2시간",
-            deadline: "14:00",
-            project: "프로젝트 A",
-            collaborators: "김영은, 오주영",
-            notes: "기획 요구사항 최신화 필요",
-            completed: false,
-            completedAt: null
-        },
-        {
-            id: "task-2",
-            name: "주간 업무 리포트 작성",
-            priority: "Med",
-            estTime: "1시간",
-            deadline: "18:00",
-            project: "기타 업무",
-            collaborators: "",
-            notes: "금주 실적 정리",
-            completed: false,
-            completedAt: null
-        }
-    ];
+    // --- [Phase 7] 임직원별 맞춤 오늘 할 일(마이크로 태스크) 데이터베이스 ---
+    const tasksDB = {
+        "EMP01": [
+            {
+                id: "task-1",
+                name: "A프로젝트 AI 요건 정의서 최종 검토",
+                priority: "High",
+                estTime: "2시간",
+                deadline: "14:00",
+                project: "프로젝트 A",
+                collaborators: "오주영",
+                notes: "기획 요구사항 최신화 및 AI 파이프라인 정합성 점검",
+                completed: false,
+                completedAt: null
+            },
+            {
+                id: "task-2",
+                name: "인사 데이터 시각화 대시보드 구조 기획",
+                priority: "Med",
+                estTime: "3시간",
+                deadline: "17:30",
+                project: "HR Analytics",
+                collaborators: "황한솔",
+                notes: "조직 분석 지표 매핑 기획",
+                completed: false,
+                completedAt: null
+            },
+            {
+                id: "task-3",
+                name: "주간 데이터 분석 리포트 작성",
+                priority: "Med",
+                estTime: "1시간",
+                deadline: "18:00",
+                project: "기타 업무",
+                collaborators: "",
+                notes: "실적 데이터 요약본 이메일 송부",
+                completed: false,
+                completedAt: null
+            }
+        ],
+        "EMP02": [
+            {
+                id: "task-4",
+                name: "Q1 분기 결산 정산 자동화 스크립트 테스트",
+                priority: "High",
+                estTime: "2시간",
+                deadline: "11:30",
+                project: "정산 자동화",
+                collaborators: "",
+                notes: "대용량 트랜잭션 에러 유무 확인",
+                completed: false,
+                completedAt: null
+            },
+            {
+                id: "task-5",
+                name: "부서별 소모품 예비비 정산 내역 검토",
+                priority: "Med",
+                estTime: "1시간 30분",
+                deadline: "15:00",
+                project: "재무 결산",
+                collaborators: "이정무",
+                notes: "영수증 누락본 리마인드 요청",
+                completed: false,
+                completedAt: null
+            },
+            {
+                id: "task-6",
+                name: "회계 감사 대응 증빙 서류 아카이빙",
+                priority: "Low",
+                estTime: "1시간",
+                deadline: "18:00",
+                project: "기타 업무",
+                collaborators: "",
+                notes: "감사팀 공유 드라이브 업로드 완료",
+                completed: false,
+                completedAt: null
+            }
+        ],
+        "EMP03": [
+            {
+                id: "task-7",
+                name: "여름 시즌 리테일 프로모션 디자인 시안 확정",
+                priority: "High",
+                estTime: "2시간",
+                deadline: "13:00",
+                project: "리테일 마케팅",
+                collaborators: "",
+                notes: "시안 배포 전 최종 해상도 및 자간 교정",
+                completed: false,
+                completedAt: null
+            },
+            {
+                id: "task-8",
+                name: "인스타그램 공식 채널 주간 콘텐츠 기획안 작성",
+                priority: "Med",
+                estTime: "1시간",
+                deadline: "16:00",
+                project: "브랜드 홍보",
+                collaborators: "",
+                notes: "피드 포스팅 5건 카드뉴스 초안 마련",
+                completed: false,
+                completedAt: null
+            },
+            {
+                id: "task-9",
+                name: "마케팅 GA4 로그 분석 데이터 취합",
+                priority: "Low",
+                estTime: "1시간 30분",
+                deadline: "18:00",
+                project: "데이터 리포팅",
+                collaborators: "김영은",
+                notes: "전주 대비 이탈률 변화 확인 및 그래프 도출",
+                completed: false,
+                completedAt: null
+            }
+        ],
+        "EMP04": [
+            {
+                id: "task-10",
+                name: "북미 바이어 대상 신제품 브로셔 메일링 발송",
+                priority: "High",
+                estTime: "1시간 30분",
+                deadline: "12:00",
+                project: "글로벌 영업",
+                collaborators: "",
+                notes: "유럽/아시아 바이어 목록과 오송신 주의",
+                completed: false,
+                completedAt: null
+            },
+            {
+                id: "task-11",
+                name: "해외 유통망 신년 계약 조건 수정안 송부",
+                priority: "High",
+                estTime: "2시간",
+                deadline: "15:00",
+                project: "계약 프로세스",
+                collaborators: "이정무",
+                notes: "단가 조정 항목 최종 조율 반영",
+                completed: false,
+                completedAt: null
+            },
+            {
+                id: "task-12",
+                name: "바이어 화상 미팅용 회의록 영문 정리",
+                priority: "Med",
+                estTime: "1시간",
+                deadline: "17:30",
+                project: "기타 업무",
+                collaborators: "",
+                notes: "주요 합의사항 위주 하이라이트화",
+                completed: false,
+                completedAt: null
+            }
+        ],
+        "EMP05": [
+            {
+                id: "task-13",
+                name: "영업본부 주간 보고서 취합 및 포맷 정리",
+                priority: "High",
+                estTime: "2시간",
+                deadline: "12:00",
+                project: "실무 지원",
+                collaborators: "김건우",
+                notes: "누락된 항목 취합하여 슬라이드 재배치",
+                completed: false,
+                completedAt: null
+            },
+            {
+                id: "task-14",
+                name: "사내 회의실 빔 프로젝터 정기 점검",
+                priority: "Low",
+                estTime: "30분",
+                deadline: "14:30",
+                project: "총무 업무",
+                collaborators: "",
+                notes: "렌즈 청소 및 램프 잔여 수명 체크",
+                completed: false,
+                completedAt: null
+            },
+            {
+                id: "task-15",
+                name: "전사 문서 파쇄기 소모품 교체 및 신청",
+                priority: "Low",
+                estTime: "30분",
+                deadline: "18:00",
+                project: "기타 업무",
+                collaborators: "",
+                notes: "4층 탕비실 옆 파쇄기 함 청소 병행",
+                completed: false,
+                completedAt: null
+            }
+        ],
+        "EMP06": [
+            {
+                id: "task-16",
+                name: "2분기 전사 다면평가 평가 항목 보완 설계",
+                priority: "High",
+                estTime: "3시간",
+                deadline: "15:00",
+                project: "HR 평가",
+                collaborators: "김영은",
+                notes: "개발/기획 직군 역량 가중치 차등 분리 기획",
+                completed: false,
+                completedAt: null
+            },
+            {
+                id: "task-17",
+                name: "신규 채용 후보자 1차 면접 일정 리마인드 송부",
+                priority: "Med",
+                estTime: "1시간",
+                deadline: "16:30",
+                project: "인재 채용",
+                collaborators: "",
+                notes: "면접관 배정 확인 메일 함께 송신",
+                completed: false,
+                completedAt: null
+            },
+            {
+                id: "task-18",
+                name: "사내 교육 훈련 이수 통계 분석 결과 보고",
+                priority: "Med",
+                estTime: "2시간",
+                deadline: "18:00",
+                project: "교육훈련 관리",
+                collaborators: "",
+                notes: "미이수 부서장 대면 리마인드 알림 송부 목록 작성",
+                completed: false,
+                completedAt: null
+            }
+        ]
+    };
+
+    // 현재 개인 성장 대시보드에 렌더링될 실제 마이크로 태스크 배열 (로그인 시 tasksDB에서 실시간 참조를 바인딩함)
+    let userTasks = [];
 
     // --- [Phase 6] 주간 역량 루프 상태 정의 ---
     let loopStates = {
@@ -212,6 +419,67 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+
+    /**
+     * [신규] 관리자 모드 - 핵심 인재 (TOTW) 위젯 동적 데이터 연동 함수
+     * 
+     * 데이터베이스(players 배열)에서 status가 'TOTW'로 지정된 핵심 인재들을 찾아
+     * 관리자 대시보드 우측 하단 Widget 6 영역(#admin-totw-widget)에 동적으로 HTML을 주입합니다.
+     * 또한, 연동된 프로필 사진 경로(예: images/youngeun.jpg)가 정상적으로 아바타로 표현되며,
+     * 클릭 시 해당 직원의 상세 카드 정보 모달(openPlayerDetail)이 뜨도록 이벤트를 바인딩합니다.
+     */
+    function renderAdminTOTWWidget() {
+        const totwWidget = document.getElementById('admin-totw-widget');
+        if (!totwWidget) return;
+
+        // players 데이터 중 status가 'TOTW'인 핵심 인재 필터링
+        const totwPlayers = players.filter(p => p.status === 'TOTW');
+        
+        if (totwPlayers.length === 0) {
+            totwWidget.innerHTML = `
+                <div style="padding: 15px; text-align: center; color: var(--gold-main); font-size: 13px;">
+                    <i class="fa-solid fa-triangle-exclamation"></i> 현재 선정된 핵심 인재(TOTW)가 없습니다.
+                </div>
+            `;
+            return;
+        }
+
+        let htmlContent = '';
+        totwPlayers.forEach(player => {
+            htmlContent += `
+                <div class="profile-row" data-id="${player.id}" style="cursor: pointer; transition: background 0.3s, transform 0.2s; padding: 6px; border-radius: 6px;">
+                    <img src="${player.imgUrl}" class="mini-avatar" alt="${player.name}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid var(--gold-main);">
+                    <div>
+                        <strong>${player.name}</strong> (${player.dept}) <br>
+                        <small style="color: var(--gold-light);">OVR ${player.overall}</small>
+                    </div>
+                </div>
+            `;
+        });
+
+        totwWidget.innerHTML = htmlContent;
+
+        // 동적으로 렌더링된 핵심 인재 행에 대해 클릭 시 상세 정보 모달 연동
+        totwWidget.querySelectorAll('.profile-row').forEach(row => {
+            row.addEventListener('click', () => {
+                const playerId = row.getAttribute('data-id');
+                const matchedPlayer = players.find(p => p.id === playerId);
+                if (matchedPlayer) {
+                    openPlayerDetail(matchedPlayer);
+                }
+            });
+
+            // 마우스 호버 시 부드러운 하이라이트 인터랙션 추가
+            row.addEventListener('mouseenter', () => {
+                row.style.background = 'rgba(212, 175, 55, 0.15)';
+                row.style.transform = 'translateX(5px)';
+            });
+            row.addEventListener('mouseleave', () => {
+                row.style.background = 'transparent';
+                row.style.transform = 'translateX(0)';
+            });
+        });
+    }
 
     // --- Card Render Function ---
     function renderCards() {
@@ -301,6 +569,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- 인재 카드 버튼 이벤트 바인딩 ---
         attachCardEvents();
+
+        // [신규] 관리자 모드일 경우 우측 하단의 핵심 인재(TOTW) 위젯도 동적으로 연동해 줍니다.
+        renderAdminTOTWWidget();
     }
 
     // ==========================================
@@ -317,6 +588,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         taskListContainer.innerHTML = '';
 
+        // [신규] 이행률 컴포넌트 엘리먼트 가져오기
+        const rateEl = document.getElementById('task-completion-rate');
+        const completedEl = document.getElementById('task-completed-count');
+        const totalEl = document.getElementById('task-total-count');
+        const barEl = document.getElementById('task-progress-bar');
+
         if (userTasks.length === 0) {
             // 태스크가 한 개도 없는 경우 빈 화면용 안내 메시지 출력
             taskListContainer.innerHTML = `
@@ -324,6 +601,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     오늘 등록된 마이크로 태스크가 없습니다. 새로운 할 일을 추가해보세요!
                 </li>
             `;
+
+            // 이행률 0% 초기화
+            if (rateEl) rateEl.textContent = '0';
+            if (completedEl) completedEl.textContent = '0';
+            if (totalEl) totalEl.textContent = '0';
+            if (barEl) {
+                barEl.style.width = '0%';
+                barEl.style.background = 'linear-gradient(90deg, #ff3366 0%, #ffaa00 100%)';
+                barEl.style.boxShadow = 'none';
+            }
             return;
         }
 
@@ -358,6 +645,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
             taskListContainer.appendChild(li);
         });
+
+        // [신규] 실시간 이행률(완료율) 및 진행바 애니메이션 동적 업데이트
+        const totalCount = userTasks.length;
+        const completedCount = userTasks.filter(t => t.completed).length;
+        const rate = Math.round((completedCount / totalCount) * 100);
+
+        if (rateEl) rateEl.textContent = rate;
+        if (completedEl) completedEl.textContent = completedCount;
+        if (totalEl) totalEl.textContent = totalCount;
+        if (barEl) {
+            barEl.style.width = `${rate}%`;
+            // 진행율에 맞춰서 색상 그라데이션 및 네온 효과 변경 (80% 이상: 초록/하늘 네온, 40% 이상: 주황/초록, 미만: 빨강/주황)
+            if (rate >= 80) {
+                barEl.style.background = 'linear-gradient(90deg, #00e676 0%, #00b0ff 100%)';
+                barEl.style.boxShadow = '0 0 10px rgba(0, 230, 118, 0.5)';
+            } else if (rate >= 40) {
+                barEl.style.background = 'linear-gradient(90deg, #ffaa00 0%, #00e676 100%)';
+                barEl.style.boxShadow = '0 0 10px rgba(255, 170, 0, 0.3)';
+            } else {
+                barEl.style.background = 'linear-gradient(90deg, #ff3366 0%, #ffaa00 100%)';
+                barEl.style.boxShadow = '0 0 10px rgba(255, 51, 102, 0.3)';
+            }
+        }
     }
 
     /**
@@ -776,9 +1086,9 @@ document.addEventListener('DOMContentLoaded', () => {
             btnElement.style.background = "rgba(0,0,0,0.3)";
             if(card) card.classList.remove('compare-selected');
         } else {
-            // 없으면 추가 (최대 4명)
-            if (compareList.length >= 4) {
-                alert("비교 인원은 최대 4명까지 선택 가능합니다.");
+            // 없으면 추가 (최대 6명)
+            if (compareList.length >= 6) {
+                alert("비교 인원은 최대 6명까지 선택 가능합니다.");
                 return;
             }
             compareList.push(pid);
@@ -2761,6 +3071,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function loginUser(user) {
         currentUser = user;
 
+        // [신규] 로그인한 유저의 고유 태스크 목록(오늘 할 일)을 바인딩합니다.
+        if (!tasksDB[user.id]) {
+            tasksDB[user.id] = [];
+        }
+        userTasks = tasksDB[user.id];
+
         // 1. 좌측 사이드바 유저 프로필 위젯 실시간 동적 매핑
         if (sidebarName) sidebarName.textContent = user.name;
         if (sidebarRole) sidebarRole.textContent = user.role;
@@ -2847,6 +3163,9 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     function logoutUser() {
         currentUser = null;
+
+        // [신규] 로그아웃 시 현재 관리 중인 마이크로 태스크 참조를 안전하게 리셋합니다.
+        userTasks = [];
 
         // 1. 로그인 폼 원복 및 입력 데이터 클리어
         if (loginOverlay) {
@@ -2946,6 +3265,178 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    /**
+     * [신규] HR 담당자 모드 - 전사 직원 검색 기능 기동 엔진
+     * 이름, 부서, 역할, OVR/스탯 기준치(숫자) 검색을 복합적으로 지원하며
+     * 검색된 카드를 클릭하면 상세 모달 뷰와 부드럽게 연동됩니다.
+     */
+    function initHREmployeeSearch() {
+        const searchInput = document.getElementById('hr-employee-search-input');
+        const searchBtn = document.getElementById('btn-hr-employee-search');
+        const resultsContainer = document.getElementById('hr-employee-search-results');
+
+        if (!searchInput || !searchBtn || !resultsContainer) return;
+
+        function performSearch() {
+            const query = searchInput.value.trim().toLowerCase();
+            if (!query) {
+                resultsContainer.innerHTML = '<p style="font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 15px;">검색어를 입력해 주세요.</p>';
+                return;
+            }
+
+            // 검색어 기반 필터링 (이름, 부서, 역할, 스탯 포함)
+            const matchedPlayers = players.filter(p => {
+                const nameMatch = p.name.toLowerCase().includes(query);
+                const deptMatch = p.dept.toLowerCase().includes(query);
+                const roleMatch = p.role.toLowerCase().includes(query);
+                
+                // 검색어가 숫자인 경우 전반적인 스탯 기준치 검사로 융통성 있는 검색 제공
+                let statMatch = false;
+                const score = parseInt(query, 10);
+                if (!isNaN(score)) {
+                    statMatch = (p.overall >= score || 
+                                 p.stats.prf >= score || 
+                                 p.stats.cop >= score || 
+                                 p.stats.grw >= score);
+                }
+
+                return nameMatch || deptMatch || roleMatch || statMatch;
+            });
+
+            if (matchedPlayers.length === 0) {
+                resultsContainer.innerHTML = '<p style="font-size: 12px; color: var(--danger); text-align: center; margin-top: 15px;"><i class="fa-solid fa-circle-info"></i> 일치하는 직원이 없습니다.</p>';
+                return;
+            }
+
+            let html = '';
+            matchedPlayers.forEach(p => {
+                html += `
+                    <div class="search-result-row" data-id="${p.id}" style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; cursor: pointer; transition: all 0.3s ease; margin-bottom: 4px;">
+                        <img src="${p.imgUrl}" alt="${p.name}" style="width: 38px; height: 38px; object-fit: cover; border-radius: 50%; border: 2px solid var(--gold-main); box-shadow: 0 0 8px rgba(212,175,55,0.2);">
+                        <div style="flex: 1; display: flex; flex-direction: column;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 13px; font-weight: bold; color: #fff;">${p.name} <small style="font-weight: normal; color: var(--text-muted); font-size: 11px;">${p.role}</small></span>
+                                <span style="font-size: 11px; font-weight: bold; color: var(--gold-main);">OVR ${p.overall}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 2px;">
+                                <span>${p.dept}</span>
+                                <span>P:${p.stats.prf} C:${p.stats.cop} G:${p.stats.grw}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            resultsContainer.innerHTML = html;
+
+            // 결과 리스트의 행들에 클릭 이벤트 및 마이크로 애니메이션 부여
+            resultsContainer.querySelectorAll('.search-result-row').forEach(row => {
+                row.addEventListener('click', () => {
+                    const pid = row.getAttribute('data-id');
+                    const player = players.find(p => p.id === pid);
+                    if (player) openPlayerDetail(player);
+                });
+
+                // 프리미엄 호버 효과
+                row.addEventListener('mouseenter', () => {
+                    row.style.background = 'rgba(212, 175, 55, 0.1)';
+                    row.style.borderColor = 'var(--gold-main)';
+                    row.style.transform = 'translateY(-2px)';
+                });
+                row.addEventListener('mouseleave', () => {
+                    row.style.background = 'rgba(255,255,255,0.03)';
+                    row.style.borderColor = 'rgba(255,255,255,0.05)';
+                    row.style.transform = 'translateY(0)';
+                });
+            });
+        }
+
+        // 검색 버튼 클릭 및 엔터키 이벤트 감지
+        searchBtn.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+    }
+ 
+    /**
+     * [신규] HR 담당자 모드 - 새로운 교육 매칭 및 계획 생성 엔진
+     * 전사 임직원 중에서 대상을 지정하고 새로운 훈련 코스를 연계/매칭합니다.
+     * 교육이 매칭되면 해당 직원의 trainingHistory(교육이수정보)에 추가되어 
+     * 실시간으로 정보가 연동 및 반영됩니다.
+     */
+    function initHRTrainingMatching() {
+        const btnOpenMatching = document.getElementById('btn-hr-create-training');
+        const matchingModal = document.getElementById('hr-training-matching-modal');
+        const closeBtn = document.getElementById('close-hr-training-matching');
+        const playerSelect = document.getElementById('hr-match-player-select');
+        const submitBtn = document.getElementById('btn-submit-hr-training-matching');
+
+        if (!btnOpenMatching || !matchingModal || !closeBtn || !playerSelect || !submitBtn) return;
+
+        // 1. 교육 매칭 모달 오픈 이벤트
+        btnOpenMatching.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // 전사 임직원 명단을 동적으로 옵션으로 주입
+            playerSelect.innerHTML = players.map(p => `
+                <option value="${p.id}">${p.name} (${p.dept} - ${p.role})</option>
+            `).join('');
+
+            matchingModal.classList.add('show');
+        });
+
+        // 2. 모달 닫기 이벤트
+        closeBtn.addEventListener('click', () => {
+            matchingModal.classList.remove('show');
+        });
+
+        // 3. 신규 교육 등록 및 매칭 처리 이벤트
+        submitBtn.addEventListener('click', () => {
+            const playerId = playerSelect.value;
+            const courseSelect = document.getElementById('hr-match-course-select');
+            if (!courseSelect) return;
+
+            const courseName = courseSelect.value;
+            const targetPlayer = players.find(p => p.id === playerId);
+
+            if (!targetPlayer) {
+                alert("⚠️ 대상을 찾을 수 없습니다.");
+                return;
+            }
+
+            // 이미 동일한 교육이 존재(진행중이거나 완료)하는지 검사
+            const isAlreadyAssigned = targetPlayer.trainingHistory.some(t => t.name === courseName);
+            if (isAlreadyAssigned) {
+                alert(`⚠️ [중복 등록 방지] ${targetPlayer.name} 직원은 이미 "${courseName}" 교육을 수강 중이거나 수료 완료했습니다.`);
+                return;
+            }
+
+            // 해당 사원의 교육이력에 신규 데이터(진행률 0%로 시작) 추가
+            targetPlayer.trainingHistory.push({
+                name: courseName,
+                status: "In Progress",
+                info: 0
+            });
+
+            // 성공 알림 토스트 출력
+            showToast(`🎓 ${targetPlayer.name} 직원에게 "${courseName}" 교육 매칭 완료!`);
+            
+            // 모달 닫기
+            matchingModal.classList.remove('show');
+
+            // 연동 데이터 갱신을 위해 카드 및 대시보드 리렌더링
+            renderCards();
+        });
+    }
+
+    // HR 직원 검색 엔진 가동
+    initHREmployeeSearch();
+
+    // HR 교육 계획 및 매칭 엔진 가동
+    initHRTrainingMatching();
 
     // 웹페이지 첫 로드 시 기본 로그아웃 상태(로그인 요구 화면)로 시작하도록 설정
     logoutUser();

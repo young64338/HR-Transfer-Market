@@ -1841,14 +1841,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const gnbTrainingEl = document.getElementById('gnb-training');
         const navTrainingEl = document.getElementById('nav-training');
         
-        if (currentMode === 'personal') {
-            if (gnbTrainingEl) gnbTrainingEl.style.display = 'none';
-            if (navTrainingEl) navTrainingEl.style.display = 'none';
-        } else {
-            // styles.css에 정의된 원래 스타일 display: flex로 복원합니다.
-            if (gnbTrainingEl) gnbTrainingEl.style.display = 'flex';
-            if (navTrainingEl) navTrainingEl.style.display = 'flex';
-        }
+        // [수정] 오주영, 김건우 등 일반 직원들이 개인 성장 모드(personal)로 접속했을 때도
+        // 본인의 데이터에 기반한 트레이닝 존(Stat Upgrade)을 정상적으로 사용할 수 있도록 항시 노출시킵니다.
+        if (gnbTrainingEl) gnbTrainingEl.style.display = 'flex';
+        if (navTrainingEl) navTrainingEl.style.display = 'flex';
     }
 
     // --- Mode Toggle Functionality ---
